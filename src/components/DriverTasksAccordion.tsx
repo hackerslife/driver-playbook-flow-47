@@ -71,7 +71,7 @@ const DriverTasksAccordion = ({ driverId, searchQuery, activeFilter }: DriverTas
           description: `Description for ${category.name} Task ${i + 1}. This explains what needs to be done.`,
           resources: ["Resource 1", "Resource 2", "Help Guide"],
           completed: Math.random() > 0.7,
-          skipped: !Math.random() > 0.7 && Math.random() > 0.8,
+          skipped: Math.random() > 0.8 && !Math.random() > 0.7, // Fixed this line
         };
       });
       

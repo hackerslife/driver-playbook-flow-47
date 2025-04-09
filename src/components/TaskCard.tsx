@@ -115,11 +115,13 @@ const TaskCard = ({ task }: TaskCardProps) => {
           >
             {skipped ? "Unskip" : "Skip"}
           </Button>
-          <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="icon">
-              {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-            </Button>
-          </CollapsibleTrigger>
+          <Collapsible open={isOpen} onOpenChange={setIsOpen} className="inline">
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="icon">
+                {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </Button>
+            </CollapsibleTrigger>
+          </Collapsible>
         </div>
       </CardFooter>
     </Card>
