@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { 
   CheckCircle, 
   BarChart3, 
@@ -57,33 +57,34 @@ const GoogleAdsGuide = () => {
 
   const renderSectionHeader = (icon: React.ReactNode, title: string, subtitle: string) => (
     <div className="flex items-start gap-4 mb-6">
-      <div className="p-2 rounded-lg bg-primary/10 text-primary">
+      <div className="info-icon">
         {icon}
       </div>
       <div>
-        <h2 className="text-2xl font-bold">{title}</h2>
+        <h2 className="text-2xl font-bold section-header">{title}</h2>
         <p className="text-muted-foreground">{subtitle}</p>
       </div>
     </div>
   );
 
   const renderInfoCard = (icon: React.ReactNode, title: string, content: string) => (
-    <Card className="border-l-4 border-l-primary shadow-sm hover:shadow-md transition-shadow">
-      <CardHeader className="pb-2">
+    <Card className="border-l-4 border-l-primary shadow-sm hover:shadow-md transition-shadow feature-card overflow-hidden">
+      <div className="absolute -right-8 -top-8 w-24 h-24 bg-primary/10 rounded-full"></div>
+      <CardHeader className="pb-2 relative z-10">
         <div className="flex items-center gap-2">
           <div className="text-primary">{icon}</div>
           <CardTitle className="text-lg">{title}</CardTitle>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="relative z-10">
         <p className="text-muted-foreground">{content}</p>
       </CardContent>
     </Card>
   );
 
-  const renderStepCard = (number: number, title: string, description: string, icon: React.ReactNode) => (
-    <div className="flex items-start gap-4 mb-6 border rounded-lg p-4 hover:bg-accent/50 transition-colors">
-      <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
+  const renderStepCard = (number: number, title: string, description: string, icon: React.ReactNode, imageSrc?: string) => (
+    <div className="flex flex-col md:flex-row items-start gap-4 mb-6 border rounded-lg p-4 step-card">
+      <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shrink-0">
         {number}
       </div>
       <div className="flex-1">
@@ -91,15 +92,24 @@ const GoogleAdsGuide = () => {
           <h3 className="font-semibold">{title}</h3>
           <div className="text-primary">{icon}</div>
         </div>
-        <p className="text-muted-foreground text-sm">{description}</p>
+        <p className="text-muted-foreground text-sm mb-3">{description}</p>
+        {imageSrc && (
+          <div className="mt-2 rounded-lg overflow-hidden border">
+            <img 
+              src={imageSrc} 
+              alt={`Step ${number}: ${title}`} 
+              className="w-full h-auto object-cover" 
+            />
+          </div>
+        )}
       </div>
     </div>
   );
 
   const renderTipCard = (title: string, description: string, icon: React.ReactNode) => (
-    <div className="border rounded-lg p-4 bg-secondary/10 hover:bg-secondary/20 transition-colors">
+    <div className="border rounded-lg p-4 bg-secondary/10 hover:bg-secondary/20 transition-colors tip-card">
       <div className="flex items-center gap-2 mb-2">
-        <div className="text-secondary">{icon}</div>
+        <div className="text-primary">{icon}</div>
         <h3 className="font-semibold">{title}</h3>
       </div>
       <p className="text-muted-foreground text-sm">{description}</p>
@@ -109,7 +119,7 @@ const GoogleAdsGuide = () => {
   const renderGlossaryTerm = (term: string, definition: string) => (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <Button variant="link" className="p-0 h-auto font-semibold text-primary underline underline-offset-4">
+        <Button variant="link" className="p-0 h-auto font-semibold glossary-term">
           {term}
         </Button>
       </HoverCardTrigger>
@@ -142,10 +152,11 @@ const GoogleAdsGuide = () => {
         {/* Sidebar Navigation */}
         <div className="md:w-1/4">
           <div className="sticky top-20">
-            <Card>
+            <Card className="overflow-hidden border-primary/20">
+              <div className="h-2 bg-gradient-to-r from-violet-500 to-fuchsia-500"></div>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2">
-                  <Search className="h-5 w-5" />
+                  <Search className="h-5 w-5 text-primary" />
                   Google Ads Guide
                 </CardTitle>
                 <CardDescription>
@@ -223,6 +234,20 @@ const GoogleAdsGuide = () => {
               <div className="space-y-6">
                 {renderSectionHeader(<BookOpen className="h-6 w-6" />, "Introduction to Google Paid Search", "Understand the basics and benefits")}
                 
+                <div className="relative rounded-xl overflow-hidden mb-8">
+                  <img 
+                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80" 
+                    alt="Google Ads Dashboard" 
+                    className="w-full h-64 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                    <div className="p-6">
+                      <h3 className="text-white text-xl font-bold">Start Your Google Ads Journey</h3>
+                      <p className="text-white/80">Drive targeted traffic with the world's most popular advertising platform</p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="grid md:grid-cols-3 gap-4">
                   {renderInfoCard(
                     <Search className="h-5 w-5" />, 
@@ -243,32 +268,40 @@ const GoogleAdsGuide = () => {
                   )}
                 </div>
 
-                <div className="bg-accent/30 rounded-lg p-6 mt-8">
-                  <h3 className="text-lg font-semibold mb-4">Google Ads at a Glance</h3>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="flex items-start gap-2">
-                      <DollarSign className="h-5 w-5 text-primary mt-0.5" />
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg p-6 mt-8 border border-purple-100 dark:border-purple-800">
+                  <h3 className="text-lg font-semibold mb-4 text-purple-800 dark:text-purple-300">Google Ads at a Glance</h3>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="flex items-start gap-3">
+                      <div className="bg-primary/20 p-2 rounded-lg">
+                        <DollarSign className="h-5 w-5 text-primary" />
+                      </div>
                       <div>
                         <h4 className="font-medium">Pay-Per-Click (PPC)</h4>
                         <p className="text-sm text-muted-foreground">You only pay when someone clicks your ad</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-2">
-                      <Target className="h-5 w-5 text-primary mt-0.5" />
+                    <div className="flex items-start gap-3">
+                      <div className="bg-primary/20 p-2 rounded-lg">
+                        <Target className="h-5 w-5 text-primary" />
+                      </div>
                       <div>
                         <h4 className="font-medium">Highly Targeted</h4>
                         <p className="text-sm text-muted-foreground">Reach customers based on search terms, location, and more</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-2">
-                      <LineChart className="h-5 w-5 text-primary mt-0.5" />
+                    <div className="flex items-start gap-3">
+                      <div className="bg-primary/20 p-2 rounded-lg">
+                        <LineChart className="h-5 w-5 text-primary" />
+                      </div>
                       <div>
                         <h4 className="font-medium">Measurable Results</h4>
                         <p className="text-sm text-muted-foreground">Track everything from clicks to conversions</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-2">
-                      <Settings className="h-5 w-5 text-primary mt-0.5" />
+                    <div className="flex items-start gap-3">
+                      <div className="bg-primary/20 p-2 rounded-lg">
+                        <Settings className="h-5 w-5 text-primary" />
+                      </div>
                       <div>
                         <h4 className="font-medium">Customizable</h4>
                         <p className="text-sm text-muted-foreground">Control your budget, bidding, and ad content</p>
@@ -284,26 +317,43 @@ const GoogleAdsGuide = () => {
               <div className="space-y-6">
                 {renderSectionHeader(<Key className="h-6 w-6" />, "Key Features to Know", "Master the essential Google Ads components")}
                 
-                <Tabs defaultValue="search-campaigns">
-                  <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="search-campaigns">
+                <div className="relative rounded-xl overflow-hidden mb-8">
+                  <img 
+                    src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&auto=format&fit=crop&q=80" 
+                    alt="Google Ads Features" 
+                    className="w-full h-64 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                    <div className="p-6">
+                      <h3 className="text-white text-xl font-bold">Powerful Advertising Tools</h3>
+                      <p className="text-white/80">Leverage Google's advanced features to maximize your ad performance</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <Tabs defaultValue="search-campaigns" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3 mb-2">
+                    <TabsTrigger value="search-campaigns" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                       <Search className="h-4 w-4 mr-2" />
                       Search Campaigns
                     </TabsTrigger>
-                    <TabsTrigger value="ad-extensions">
+                    <TabsTrigger value="ad-extensions" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                       <LayoutTemplate className="h-4 w-4 mr-2" />
                       Ad Extensions
                     </TabsTrigger>
-                    <TabsTrigger value="targeting">
+                    <TabsTrigger value="targeting" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                       <Target className="h-4 w-4 mr-2" />
                       Targeting
                     </TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="search-campaigns" className="mt-4 space-y-4">
-                    <Card>
+                    <Card className="border-t-4 border-t-primary">
                       <CardHeader>
-                        <CardTitle>Search Campaigns, Keywords & Bidding</CardTitle>
+                        <CardTitle className="flex items-center gap-2">
+                          <Search className="h-5 w-5 text-primary" />
+                          Search Campaigns, Keywords & Bidding
+                        </CardTitle>
                         <CardDescription>The building blocks of your Google Ads strategy</CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
@@ -354,19 +404,30 @@ const GoogleAdsGuide = () => {
                             </div>
                           </div>
                         </div>
+                        
+                        <div className="rounded-lg overflow-hidden mt-4 border">
+                          <img 
+                            src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&auto=format&fit=crop&q=80" 
+                            alt="Google Ads Search Campaign Interface" 
+                            className="w-full h-auto object-cover"
+                          />
+                        </div>
                       </CardContent>
                     </Card>
                   </TabsContent>
                   
                   <TabsContent value="ad-extensions" className="mt-4">
-                    <Card>
+                    <Card className="border-t-4 border-t-primary">
                       <CardHeader>
-                        <CardTitle>Ad Extensions & Responsive Search Ads</CardTitle>
+                        <CardTitle className="flex items-center gap-2">
+                          <LayoutTemplate className="h-5 w-5 text-primary" />
+                          Ad Extensions & Responsive Search Ads
+                        </CardTitle>
                         <CardDescription>Enhance your ads with additional information</CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div className="grid md:grid-cols-2 gap-4">
-                          <div className="border rounded-lg p-4">
+                          <div className="border rounded-lg p-4 feature-card">
                             <h4 className="font-semibold mb-2 flex items-center gap-2">
                               <LayoutTemplate className="h-4 w-4 text-primary" />
                               Ad Extensions
@@ -381,7 +442,7 @@ const GoogleAdsGuide = () => {
                             </div>
                           </div>
                           
-                          <div className="border rounded-lg p-4">
+                          <div className="border rounded-lg p-4 feature-card">
                             <h4 className="font-semibold mb-2 flex items-center gap-2">
                               <PenTool className="h-4 w-4 text-primary" />
                               Responsive Search Ads
@@ -404,8 +465,19 @@ const GoogleAdsGuide = () => {
                           </div>
                         </div>
                         
-                        <div className="bg-accent/30 rounded-lg p-4 mt-4">
-                          <h4 className="font-semibold mb-2">Pro Tip</h4>
+                        <div className="rounded-lg overflow-hidden my-4 border">
+                          <img 
+                            src="https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=800&auto=format&fit=crop&q=80" 
+                            alt="Google Ads Extensions" 
+                            className="w-full h-auto object-cover"
+                          />
+                        </div>
+                        
+                        <div className="bg-accent/30 rounded-lg p-4 mt-4 border border-primary/20">
+                          <h4 className="font-semibold mb-2 flex items-center gap-2">
+                            <Star className="h-4 w-4 text-primary" />
+                            Pro Tip
+                          </h4>
                           <p className="text-sm">Use as many relevant ad extensions as possible. They improve your ad's visibility and usually increase click-through rate at no additional cost.</p>
                         </div>
                       </CardContent>
@@ -413,9 +485,12 @@ const GoogleAdsGuide = () => {
                   </TabsContent>
                   
                   <TabsContent value="targeting" className="mt-4">
-                    <Card>
+                    <Card className="border-t-4 border-t-primary">
                       <CardHeader>
-                        <CardTitle>Targeting & Geo-Fencing</CardTitle>
+                        <CardTitle className="flex items-center gap-2">
+                          <Target className="h-5 w-5 text-primary" />
+                          Targeting & Geo-Fencing
+                        </CardTitle>
                         <CardDescription>Reach the right audience at the right time</CardDescription>
                       </CardHeader>
                       <CardContent>
@@ -450,6 +525,14 @@ const GoogleAdsGuide = () => {
                                 <li>Location groups (like places of interest)</li>
                               </ul>
                             </div>
+                          </div>
+                          
+                          <div className="rounded-lg overflow-hidden my-4 border">
+                            <img 
+                              src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&auto=format&fit=crop&q=80" 
+                              alt="Google Ads Targeting Interface" 
+                              className="w-full h-auto object-cover"
+                            />
                           </div>
                           
                           <div className="border-t pt-4">
@@ -492,19 +575,64 @@ const GoogleAdsGuide = () => {
               <div className="space-y-6">
                 {renderSectionHeader(<ClipboardList className="h-6 w-6" />, "Step-by-Step Setup Guide", "Launch your first Google Ads campaign")}
                 
-                <div className="space-y-6">
-                  {renderStepCard(1, "Creating a Google Ads Account", "Start by setting up your Google Ads account at ads.google.com. You'll need a Google account and basic business information.", <Settings className="h-4 w-4" />)}
-                  
-                  {renderStepCard(2, "Keyword Research", "Use the Keyword Planner tool to find relevant keywords for your business. Look for search terms with good volume and reasonable competition.", <Key className="h-4 w-4" />)}
-                  
-                  {renderStepCard(3, "Writing Effective Ad Copy", "Create compelling headlines and descriptions that include your keywords. Focus on benefits and include a strong call-to-action.", <PenTool className="h-4 w-4" />)}
-                  
-                  {renderStepCard(4, "Setting Up Budget and Location Targeting", "Determine daily budget and geographic areas where you want your ads to appear. Start conservative and adjust based on performance.", <MapPin className="h-4 w-4" />)}
-                  
-                  {renderStepCard(5, "Launching Your First Campaign", "Review all settings, ensure your tracking is set up correctly, and activate your campaign. Monitor closely during the first few days.", <Rocket className="h-4 w-4" />)}
+                <div className="relative rounded-xl overflow-hidden mb-8">
+                  <img 
+                    src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=80" 
+                    alt="Google Ads Setup" 
+                    className="w-full h-64 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                    <div className="p-6">
+                      <h3 className="text-white text-xl font-bold">Ready to Launch</h3>
+                      <p className="text-white/80">Follow these steps to create your first Google Ads campaign</p>
+                    </div>
+                  </div>
                 </div>
                 
-                <Card className="border border-primary/20 bg-primary/5 mt-8">
+                <div className="space-y-6">
+                  {renderStepCard(
+                    1, 
+                    "Creating a Google Ads Account", 
+                    "Start by setting up your Google Ads account at ads.google.com. You'll need a Google account and basic business information.", 
+                    <Settings className="h-4 w-4" />,
+                    "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=500&auto=format&fit=crop&q=80"
+                  )}
+                  
+                  {renderStepCard(
+                    2, 
+                    "Keyword Research", 
+                    "Use the Keyword Planner tool to find relevant keywords for your business. Look for search terms with good volume and reasonable competition.", 
+                    <Key className="h-4 w-4" />,
+                    "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500&auto=format&fit=crop&q=80"
+                  )}
+                  
+                  {renderStepCard(
+                    3, 
+                    "Writing Effective Ad Copy", 
+                    "Create compelling headlines and descriptions that include your keywords. Focus on benefits and include a strong call-to-action.", 
+                    <PenTool className="h-4 w-4" />,
+                    "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=500&auto=format&fit=crop&q=80"
+                  )}
+                  
+                  {renderStepCard(
+                    4, 
+                    "Setting Up Budget and Location Targeting", 
+                    "Determine daily budget and geographic areas where you want your ads to appear. Start conservative and adjust based on performance.", 
+                    <MapPin className="h-4 w-4" />,
+                    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500&auto=format&fit=crop&q=80"
+                  )}
+                  
+                  {renderStepCard(
+                    5, 
+                    "Launching Your First Campaign", 
+                    "Review all settings, ensure your tracking is set up correctly, and activate your campaign. Monitor closely during the first few days.", 
+                    <Rocket className="h-4 w-4" />,
+                    "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&auto=format&fit=crop&q=80"
+                  )}
+                </div>
+                
+                <Card className="border border-primary/20 bg-primary/5 mt-8 overflow-hidden">
+                  <div className="h-2 bg-gradient-to-r from-violet-500 to-fuchsia-500"></div>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <ClipboardList className="h-5 w-5 text-primary" />
@@ -539,9 +667,23 @@ const GoogleAdsGuide = () => {
               <div className="space-y-6">
                 {renderSectionHeader(<Star className="h-6 w-6" />, "Best Practices & Tips", "Optimize your campaigns for better results")}
                 
+                <div className="relative rounded-xl overflow-hidden mb-8">
+                  <img 
+                    src="https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=800&auto=format&fit=crop&q=80" 
+                    alt="Google Ads Best Practices" 
+                    className="w-full h-64 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                    <div className="p-6">
+                      <h3 className="text-white text-xl font-bold">Maximize Your Ad Performance</h3>
+                      <p className="text-white/80">Follow these proven strategies to get the most from your ad budget</p>
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <h3 className="font-semibold text-lg flex items-center gap-2">
+                    <h3 className="font-semibold text-lg flex items-center gap-2 section-header">
                       <DollarSign className="h-5 w-5 text-primary" />
                       Budgeting Strategies
                     </h3>
@@ -566,7 +708,7 @@ const GoogleAdsGuide = () => {
                   </div>
                   
                   <div className="space-y-4">
-                    <h3 className="font-semibold text-lg flex items-center gap-2">
+                    <h3 className="font-semibold text-lg flex items-center gap-2 section-header">
                       <SplitSquareVertical className="h-5 w-5 text-primary" />
                       A/B Testing Ads
                     </h3>
@@ -593,7 +735,7 @@ const GoogleAdsGuide = () => {
                 
                 <div className="grid md:grid-cols-2 gap-6 mt-6">
                   <div className="space-y-4">
-                    <h3 className="font-semibold text-lg flex items-center gap-2">
+                    <h3 className="font-semibold text-lg flex items-center gap-2 section-header">
                       <Activity className="h-5 w-5 text-primary" />
                       Using Conversion Tracking
                     </h3>
@@ -618,7 +760,7 @@ const GoogleAdsGuide = () => {
                   </div>
                   
                   <div className="space-y-4">
-                    <h3 className="font-semibold text-lg flex items-center gap-2">
+                    <h3 className="font-semibold text-lg flex items-center gap-2 section-header">
                       <AlertTriangle className="h-5 w-5 text-primary" />
                       Avoiding Common Mistakes
                     </h3>
@@ -650,15 +792,33 @@ const GoogleAdsGuide = () => {
               <div className="space-y-6">
                 {renderSectionHeader(<BarChart3 className="h-6 w-6" />, "Analyzing & Optimizing", "Measure performance and make data-driven improvements")}
                 
-                <Card>
+                <div className="relative rounded-xl overflow-hidden mb-8">
+                  <img 
+                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80" 
+                    alt="Google Ads Analytics" 
+                    className="w-full h-64 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                    <div className="p-6">
+                      <h3 className="text-white text-xl font-bold">Data-Driven Decision Making</h3>
+                      <p className="text-white/80">Use insights from your ad campaigns to continually improve performance</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <Card className="overflow-hidden">
+                  <div className="h-2 bg-gradient-to-r from-violet-500 to-fuchsia-500"></div>
                   <CardHeader>
-                    <CardTitle>Understanding Key Metrics</CardTitle>
+                    <CardTitle className="flex items-center gap-2">
+                      <Activity className="h-5 w-5 text-primary" />
+                      Understanding Key Metrics
+                    </CardTitle>
                     <CardDescription>Essential performance indicators for your Google Ads campaigns</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div className="p-4 border rounded-lg">
+                        <div className="p-4 border rounded-lg bg-gradient-to-br from-white to-purple-50 dark:from-transparent dark:to-transparent feature-card">
                           <h4 className="font-medium mb-1 flex items-center gap-2">
                             <Activity className="h-4 w-4 text-primary" />
                             CTR (Click-Through Rate)
@@ -671,12 +831,12 @@ const GoogleAdsGuide = () => {
                             </div>
                             <div className="flex justify-between">
                               <span>Goal:</span>
-                              <span className="text-primary">Higher is better</span>
+                              <span className="text-primary font-medium">Higher is better</span>
                             </div>
                           </div>
                         </div>
                         
-                        <div className="p-4 border rounded-lg">
+                        <div className="p-4 border rounded-lg bg-gradient-to-br from-white to-purple-50 dark:from-transparent dark:to-transparent feature-card">
                           <h4 className="font-medium mb-1 flex items-center gap-2">
                             <DollarSign className="h-4 w-4 text-primary" />
                             CPC (Cost Per Click)
@@ -689,12 +849,12 @@ const GoogleAdsGuide = () => {
                             </div>
                             <div className="flex justify-between">
                               <span>Goal:</span>
-                              <span className="text-primary">Lower is better</span>
+                              <span className="text-primary font-medium">Lower is better</span>
                             </div>
                           </div>
                         </div>
                         
-                        <div className="p-4 border rounded-lg">
+                        <div className="p-4 border rounded-lg bg-gradient-to-br from-white to-purple-50 dark:from-transparent dark:to-transparent feature-card">
                           <h4 className="font-medium mb-1 flex items-center gap-2">
                             <Percent className="h-4 w-4 text-primary" />
                             Conversion Rate
@@ -707,12 +867,12 @@ const GoogleAdsGuide = () => {
                             </div>
                             <div className="flex justify-between">
                               <span>Goal:</span>
-                              <span className="text-primary">Higher is better</span>
+                              <span className="text-primary font-medium">Higher is better</span>
                             </div>
                           </div>
                         </div>
                         
-                        <div className="p-4 border rounded-lg">
+                        <div className="p-4 border rounded-lg bg-gradient-to-br from-white to-purple-50 dark:from-transparent dark:to-transparent feature-card">
                           <h4 className="font-medium mb-1 flex items-center gap-2">
                             <DollarSign className="h-4 w-4 text-primary" />
                             CPA (Cost Per Acquisition)
@@ -725,12 +885,12 @@ const GoogleAdsGuide = () => {
                             </div>
                             <div className="flex justify-between">
                               <span>Goal:</span>
-                              <span className="text-primary">Lower is better</span>
+                              <span className="text-primary font-medium">Lower is better</span>
                             </div>
                           </div>
                         </div>
                         
-                        <div className="p-4 border rounded-lg">
+                        <div className="p-4 border rounded-lg bg-gradient-to-br from-white to-purple-50 dark:from-transparent dark:to-transparent feature-card">
                           <h4 className="font-medium mb-1 flex items-center gap-2">
                             <Percent className="h-4 w-4 text-primary" />
                             ROAS (Return on Ad Spend)
@@ -743,12 +903,12 @@ const GoogleAdsGuide = () => {
                             </div>
                             <div className="flex justify-between">
                               <span>Goal:</span>
-                              <span className="text-primary">Higher is better</span>
+                              <span className="text-primary font-medium">Higher is better</span>
                             </div>
                           </div>
                         </div>
                         
-                        <div className="p-4 border rounded-lg">
+                        <div className="p-4 border rounded-lg bg-gradient-to-br from-white to-purple-50 dark:from-transparent dark:to-transparent feature-card">
                           <h4 className="font-medium mb-1 flex items-center gap-2">
                             <Activity className="h-4 w-4 text-primary" />
                             Quality Score
@@ -761,7 +921,7 @@ const GoogleAdsGuide = () => {
                             </div>
                             <div className="flex justify-between">
                               <span>Goal:</span>
-                              <span className="text-primary">7+ is ideal</span>
+                              <span className="text-primary font-medium">7+ is ideal</span>
                             </div>
                           </div>
                         </div>
@@ -771,10 +931,10 @@ const GoogleAdsGuide = () => {
                 </Card>
                 
                 <div className="space-y-4 mt-6">
-                  <h3 className="font-semibold text-lg">Essential Tools</h3>
+                  <h3 className="font-semibold text-lg section-header">Essential Tools</h3>
                   
                   <div className="grid md:grid-cols-2 gap-4">
-                    <Card>
+                    <Card className="feature-card">
                       <CardHeader className="pb-2">
                         <CardTitle className="text-base flex items-center gap-2">
                           <PieChart className="h-4 w-4 text-primary" />
@@ -800,7 +960,7 @@ const GoogleAdsGuide = () => {
                       </CardContent>
                     </Card>
                     
-                    <Card>
+                    <Card className="feature-card">
                       <CardHeader className="pb-2">
                         <CardTitle className="text-base flex items-center gap-2">
                           <Key className="h-4 w-4 text-primary" />
@@ -828,7 +988,8 @@ const GoogleAdsGuide = () => {
                   </div>
                 </div>
                 
-                <Card className="border-primary/20 bg-primary/5 mt-6">
+                <Card className="border-primary/20 bg-primary/5 mt-6 overflow-hidden">
+                  <div className="h-2 bg-gradient-to-r from-violet-500 to-fuchsia-500"></div>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Calendar className="h-5 w-5 text-primary" />
@@ -856,8 +1017,22 @@ const GoogleAdsGuide = () => {
               <div className="space-y-6">
                 {renderSectionHeader(<CheckCircle className="h-6 w-6" />, "Bonus Resources", "Extra tools and references to enhance your Google Ads knowledge")}
                 
+                <div className="relative rounded-xl overflow-hidden mb-8">
+                  <img 
+                    src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&auto=format&fit=crop&q=80" 
+                    alt="Google Ads Resources" 
+                    className="w-full h-64 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                    <div className="p-6">
+                      <h3 className="text-white text-xl font-bold">Additional Resources</h3>
+                      <p className="text-white/80">Tools, templates and references to enhance your Google Ads campaigns</p>
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="grid md:grid-cols-3 gap-6">
-                  <Card>
+                  <Card className="feature-card">
                     <CardHeader>
                       <CardTitle className="text-base flex items-center gap-2">
                         <CheckSquare className="h-4 w-4 text-primary" />
@@ -867,7 +1042,7 @@ const GoogleAdsGuide = () => {
                     <CardContent>
                       <Drawer>
                         <DrawerTrigger asChild>
-                          <Button className="w-full">
+                          <Button className="w-full bg-primary hover:bg-primary/90">
                             Open Campaign Launch Checklist
                           </Button>
                         </DrawerTrigger>
@@ -905,7 +1080,7 @@ const GoogleAdsGuide = () => {
                     </CardContent>
                   </Card>
                   
-                  <Card>
+                  <Card className="feature-card">
                     <CardHeader>
                       <CardTitle className="text-base flex items-center gap-2">
                         <LayoutTemplate className="h-4 w-4 text-primary" />
@@ -977,7 +1152,7 @@ const GoogleAdsGuide = () => {
                     </CardContent>
                   </Card>
                   
-                  <Card>
+                  <Card className="feature-card">
                     <CardHeader>
                       <CardTitle className="text-base flex items-center gap-2">
                         <HelpCircle className="h-4 w-4 text-primary" />
@@ -1027,12 +1202,15 @@ const GoogleAdsGuide = () => {
                   </Card>
                 </div>
                 
-                <div className="rounded-lg border p-6 bg-muted/40 mt-8">
-                  <h3 className="text-lg font-semibold mb-4">Additional Resources</h3>
+                <div className="rounded-lg border p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 mt-8">
+                  <h3 className="text-lg font-semibold mb-4 section-header">Additional Resources</h3>
                   <div className="space-y-4">
                     <div className="grid md:grid-cols-2 gap-4">
-                      <div className="bg-background rounded-lg p-4 border">
-                        <h4 className="font-medium mb-2">Google's Official Resources</h4>
+                      <div className="bg-background rounded-lg p-4 border resource-card">
+                        <h4 className="font-medium mb-2 flex items-center gap-2">
+                          <BookOpen className="h-4 w-4 text-primary" />
+                          Google's Official Resources
+                        </h4>
                         <ul className="text-sm list-disc pl-5 space-y-1">
                           <li>Google Ads Help Center</li>
                           <li>Skillshop (Google's training platform)</li>
@@ -1041,8 +1219,11 @@ const GoogleAdsGuide = () => {
                         </ul>
                       </div>
                       
-                      <div className="bg-background rounded-lg p-4 border">
-                        <h4 className="font-medium mb-2">Helpful Tools</h4>
+                      <div className="bg-background rounded-lg p-4 border resource-card">
+                        <h4 className="font-medium mb-2 flex items-center gap-2">
+                          <Wrench className="h-4 w-4 text-primary" />
+                          Helpful Tools
+                        </h4>
                         <ul className="text-sm list-disc pl-5 space-y-1">
                           <li>Google Ads Editor (desktop application)</li>
                           <li>Google Analytics</li>
@@ -1052,12 +1233,15 @@ const GoogleAdsGuide = () => {
                       </div>
                     </div>
                     
-                    <div className="bg-background rounded-lg p-4 border">
-                      <h4 className="font-medium mb-2">Stay Updated</h4>
+                    <div className="bg-background rounded-lg p-4 border resource-card">
+                      <h4 className="font-medium mb-2 flex items-center gap-2">
+                        <BookOpen className="h-4 w-4 text-primary" />
+                        Stay Updated
+                      </h4>
                       <div className="space-y-4">
                         <div className="flex items-center gap-4">
                           <Input type="email" placeholder="Enter your email" />
-                          <Button>Subscribe</Button>
+                          <Button className="bg-primary hover:bg-primary/90">Subscribe</Button>
                         </div>
                         <p className="text-xs text-muted-foreground">Subscribe to receive updates about Google Ads features, best practices, and industry trends.</p>
                       </div>
