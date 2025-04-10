@@ -1,12 +1,12 @@
 
 import { useState } from "react";
 import { Search, Calendar, Clock, DollarSign, ChevronDown, ChevronUp, Filter } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import CircularProgressChart from "@/components/CircularProgressChart";
 import DriverTasksAccordion from "@/components/DriverTasksAccordion";
 import TopNavbar from "@/components/TopNavbar";
@@ -14,7 +14,7 @@ import TopNavbar from "@/components/TopNavbar";
 const PlaybookTracker = () => {
   const [activeFilter, setActiveFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeDriver, setActiveDriver] = useState("all");
+  const [activeStatus, setActiveStatus] = useState("all");
 
   // Mock data - Total tasks stats
   const taskStats = {
@@ -28,16 +28,6 @@ const PlaybookTracker = () => {
   const completedPercentage = (taskStats.completed / taskStats.total) * 100;
   const skippedPercentage = (taskStats.skipped / taskStats.total) * 100;
   const pendingPercentage = (taskStats.pending / taskStats.total) * 100;
-
-  // Mock data - Drivers
-  const drivers = [
-    { id: "all", name: "All Tasks" },
-    { id: "brandprint", name: "Brandprint" },
-    { id: "content", name: "Content Asset Creation" },
-    { id: "licenses", name: "Licenses and 3rd Party Tools" },
-    { id: "customer", name: "New Customer Acquisition" },
-    { id: "existing", name: "Existing Customer Management" }
-  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -167,27 +157,47 @@ const PlaybookTracker = () => {
           </div>
         </div>
         
-        {/* Driver Tabs */}
-        <Tabs defaultValue="all" className="w-full">
-          <TabsList className="mb-6 w-full overflow-x-auto flex flex-nowrap no-scrollbar">
-            {drivers.map(driver => (
-              <TabsTrigger 
-                key={driver.id} 
-                value={driver.id}
-                className="flex-shrink-0"
-                onClick={() => setActiveDriver(driver.id)}
-              >
-                {driver.name}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          
-          {drivers.map(driver => (
-            <TabsContent key={driver.id} value={driver.id}>
-              <DriverTasksAccordion driverId={driver.id} searchQuery={searchQuery} activeFilter={activeFilter} />
-            </TabsContent>
-          ))}
-        </Tabs>
+        {/* Status Filter Buttons */}
+        <div className="mb-6">
+          <div className="bg-white p-4 rounded-xl shadow-sm flex justify-center gap-4">
+            <Button 
+              variant={activeStatus === "all" ? "default" : "outline"}
+              onClick={() => setActiveStatus("all")}
+              className="px-6 py-2"
+            >
+              All Tasks ({taskStats.total})
+            </Button>
+            <Button 
+              variant={activeStatus === "pending" ? "default" : "outline"}
+              onClick={() => setActiveStatus("pending")}
+              className="px-6 py-2 text-blue-700 bg-blue-50 hover:bg-blue-100 border-blue-200"
+            >
+              Pending ({taskStats.pending})
+            </Button>
+            <Button 
+              variant={activeStatus === "completed" ? "default" : "outline"}
+              onClick={() => setActiveStatus("completed")}
+              className="px-6 py-2 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200"
+            >
+              Completed ({taskStats.completed})
+            </Button>
+            <Button 
+              variant={activeStatus === "skipped" ? "default" : "outline"}
+              onClick={() => setActiveStatus("skipped")}
+              className="px-6 py-2 text-amber-700 bg-amber-50 hover:bg-amber-100 border-amber-200"
+            >
+              Skipped ({taskStats.skipped})
+            </Button>
+          </div>
+        </div>
+        
+        {/* All Tasks Section - Single View */}
+        <DriverTasksAccordion 
+          driverId="all" 
+          searchQuery={searchQuery} 
+          activeFilter={activeFilter} 
+          activeStatus={activeStatus}
+        />
       </div>
       
       {/* Gamification Footer */}

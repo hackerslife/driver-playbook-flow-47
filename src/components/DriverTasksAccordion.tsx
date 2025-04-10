@@ -18,9 +18,10 @@ interface DriverTasksAccordionProps {
   driverId: string;
   searchQuery: string;
   activeFilter: string;
+  activeStatus?: string;
 }
 
-const DriverTasksAccordion = ({ driverId, searchQuery, activeFilter }: DriverTasksAccordionProps) => {
+const DriverTasksAccordion = ({ driverId, searchQuery, activeFilter, activeStatus = "all" }: DriverTasksAccordionProps) => {
   const [localSearch, setLocalSearch] = useState("");
   const [sortBy, setSortBy] = useState("frequency");
   
@@ -71,7 +72,7 @@ const DriverTasksAccordion = ({ driverId, searchQuery, activeFilter }: DriverTas
           description: `Description for ${category.name} Task ${i + 1}. This explains what needs to be done.`,
           resources: ["Resource 1", "Resource 2", "Help Guide"],
           completed: Math.random() > 0.7,
-          skipped: Math.random() > 0.8 && !Math.random() > 0.7, // Fixed this line
+          skipped: Math.random() > 0.8
         };
       });
       
@@ -104,7 +105,7 @@ const DriverTasksAccordion = ({ driverId, searchQuery, activeFilter }: DriverTas
   
   const taskGroups = generateTasks(driverId, driverId);
   
-  // Filter tasks based on search query and active filter
+  // Filter tasks based on search query, active filter, and active status
   const filteredTaskGroups = taskGroups.map(group => {
     const filteredTasks = group.tasks.filter(task => {
       const matchesSearch = task.title.toLowerCase().includes((searchQuery || localSearch).toLowerCase());
@@ -118,7 +119,14 @@ const DriverTasksAccordion = ({ driverId, searchQuery, activeFilter }: DriverTas
         if (activeFilter === "yearly" && task.frequency !== "Yearly") matchesFilter = false;
       }
       
-      return matchesSearch && matchesFilter;
+      let matchesStatus = true;
+      if (activeStatus !== "all") {
+        if (activeStatus === "completed" && !task.completed) matchesStatus = false;
+        if (activeStatus === "skipped" && !task.skipped) matchesStatus = false;
+        if (activeStatus === "pending" && (task.completed || task.skipped)) matchesStatus = false;
+      }
+      
+      return matchesSearch && matchesFilter && matchesStatus;
     });
     
     return {
@@ -150,7 +158,7 @@ const DriverTasksAccordion = ({ driverId, searchQuery, activeFilter }: DriverTas
       {/* Header with driver name and description */}
       <div className="p-6 border-b">
         <h2 className="text-2xl font-semibold text-blue-700 mb-4">
-          {driverId === "all" ? "All Tasks" : drivers.find(d => d.id === driverId)?.name || "Tasks"}
+          All Tasks
         </h2>
         <p className="text-gray-600">{description}</p>
         
@@ -230,15 +238,5 @@ const DriverTasksAccordion = ({ driverId, searchQuery, activeFilter }: DriverTas
     </div>
   );
 };
-
-// Mock data for drivers
-const drivers = [
-  { id: "all", name: "All Tasks" },
-  { id: "brandprint", name: "Brandprint" },
-  { id: "content", name: "Content Asset Creation" },
-  { id: "licenses", name: "Licenses and 3rd Party Tools" },
-  { id: "customer", name: "New Customer Acquisition" },
-  { id: "existing", name: "Existing Customer Management" }
-];
 
 export default DriverTasksAccordion;
