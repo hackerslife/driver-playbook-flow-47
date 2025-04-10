@@ -1,9 +1,10 @@
+
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
-import { PlaybookTracker } from "./pages/PlaybookTracker";
-import { Index } from "./pages/Index";
-import { NotFound } from "./pages/NotFound";
+import PlaybookTracker from "./pages/PlaybookTracker";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
 import GoogleAdsGuide from "./pages/GoogleAdsGuide";
 
 function App() {
