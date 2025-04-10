@@ -99,6 +99,7 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
   }
 }
 
@@ -130,5 +131,108 @@
   
   .resource-card {
     @apply bg-background shadow-sm hover:shadow-md transition-shadow border rounded-lg p-4;
+  }
+  
+  /* New enhanced styling */
+  .guide-container {
+    @apply max-w-7xl mx-auto px-4 py-8;
+  }
+  
+  .hero-section {
+    @apply relative rounded-xl overflow-hidden mb-8;
+  }
+  
+  .hero-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-black/80 to-transparent/30 flex items-end;
+  }
+  
+  .hero-content {
+    @apply p-6 md:p-8;
+  }
+  
+  .hero-title {
+    @apply text-white text-xl md:text-2xl font-bold;
+  }
+  
+  .hero-subtitle {
+    @apply text-white/80 text-sm md:text-base;
+  }
+  
+  .section-card {
+    @apply border rounded-xl overflow-hidden bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-300;
+  }
+  
+  .section-card-header {
+    @apply h-2 bg-gradient-to-r from-violet-500 to-fuchsia-500;
+  }
+  
+  .section-icon-container {
+    @apply bg-primary/20 p-2 rounded-lg text-primary;
+  }
+  
+  .sidebar-fixed {
+    @apply sticky top-8;
+  }
+  
+  .progress-container {
+    @apply mt-2;
+  }
+  
+  .progress-header {
+    @apply flex justify-between mb-1 text-sm;
+  }
+  
+  .progress-bar {
+    @apply h-2;
+  }
+  
+  .content-container {
+    @apply h-[calc(100vh-8rem)] pr-2 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent;
+  }
+  
+  .grid-feature {
+    @apply grid md:grid-cols-3 gap-4;
+  }
+  
+  .grid-steps {
+    @apply space-y-6;
+  }
+  
+  .grid-tips {
+    @apply grid md:grid-cols-2 gap-6;
+  }
+  
+  .grid-metrics {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+  }
+  
+  .metric-card {
+    @apply p-4 border rounded-lg bg-gradient-to-br from-white to-purple-50 dark:from-transparent dark:to-transparent feature-card;
+  }
+  
+  .checklist-grid {
+    @apply grid md:grid-cols-2 gap-x-8 gap-y-2;
+  }
+  
+  .gradient-bg {
+    @apply bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20;
+  }
+  
+  /* Scrollbar styling */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  
+  .scrollbar-thumb-primary\/20::-webkit-scrollbar-thumb {
+    background-color: rgba(159, 122, 234, 0.2);
+    border-radius: 9999px;
+  }
+  
+  .scrollbar-track-transparent::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
   }
 }
