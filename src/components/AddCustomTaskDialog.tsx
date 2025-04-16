@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Search, Plus, Clock, Calendar, DollarSign, X } from "lucide-react";
+import { Search, Plus, Clock, Calendar, DollarSign, X, AlertTriangle } from "lucide-react";
 import { 
   Dialog, 
   DialogContent, 
@@ -19,6 +19,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 
 // Mock database of tasks that weren't recommended but are available
@@ -56,6 +57,41 @@ const unrecommendedTasks = [
     title: "Competitor Research", 
     frequency: "Monthly", 
     time: { hours: "03", minutes: "00" }, 
+    cost: "$0" 
+  },
+  { 
+    id: "task-6", 
+    title: "Create YouTube Channel", 
+    frequency: "One Time", 
+    time: { hours: "02", minutes: "00" }, 
+    cost: "$0" 
+  },
+  { 
+    id: "task-7", 
+    title: "Social Media Content Calendar", 
+    frequency: "Monthly", 
+    time: { hours: "01", minutes: "30" }, 
+    cost: "$10" 
+  },
+  { 
+    id: "task-8", 
+    title: "SEO Keyword Research", 
+    frequency: "Monthly", 
+    time: { hours: "02", minutes: "00" }, 
+    cost: "$20" 
+  },
+  { 
+    id: "task-9", 
+    title: "Set Up Google Search Console", 
+    frequency: "One Time", 
+    time: { hours: "01", minutes: "00" }, 
+    cost: "$0" 
+  },
+  { 
+    id: "task-10", 
+    title: "Install Facebook Conversion API", 
+    frequency: "One Time", 
+    time: { hours: "01", minutes: "15" }, 
     cost: "$0" 
   },
 ];
@@ -158,15 +194,15 @@ const AddCustomTaskDialog = ({ onAddTask }: AddCustomTaskDialogProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2">
+        <Button variant="outline" className="gap-2 hover:bg-blue-50 hover:text-blue-700 border-blue-200">
           <Plus size={16} />
           Add Your Own Task
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[550px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="text-xl text-center mb-2">Add Your Own Task</DialogTitle>
-          <p className="text-gray-600 text-center">
+          <p className="text-gray-600 text-center mb-4">
             Looking for a task we didn't recommend? Search and add it—or create your own if it's not found.
           </p>
         </DialogHeader>
@@ -177,7 +213,7 @@ const AddCustomTaskDialog = ({ onAddTask }: AddCustomTaskDialogProps) => {
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Search for a task..."
-              className="pl-10"
+              className="pl-10 border-blue-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -185,32 +221,62 @@ const AddCustomTaskDialog = ({ onAddTask }: AddCustomTaskDialogProps) => {
           
           {/* Task suggestions */}
           {suggestions.length > 0 && (
-            <div className="bg-gray-50 rounded-md p-2 max-h-44 overflow-y-auto">
-              <div className="text-sm text-gray-500 mb-2">Suggestions:</div>
-              {suggestions.map((task) => (
-                <div 
-                  key={task.id}
-                  className="py-2 px-3 rounded-md hover:bg-blue-50 cursor-pointer flex justify-between items-center"
-                  onClick={() => selectSuggestion(task)}
-                >
-                  <div className="font-medium">{task.title}</div>
-                  <Badge className="bg-blue-100 text-blue-600 hover:bg-blue-200">{task.frequency}</Badge>
-                </div>
-              ))}
+            <div className="bg-blue-50 rounded-lg p-3 max-h-60 overflow-y-auto border border-blue-100">
+              <div className="text-sm font-medium text-blue-700 mb-2 flex items-center">
+                <Search className="h-4 w-4 mr-1" /> 
+                Search Results ({suggestions.length})
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {suggestions.map((task) => (
+                  <div 
+                    key={task.id}
+                    className="p-3 rounded-md bg-white hover:bg-blue-100 cursor-pointer flex flex-col border border-blue-200 shadow-sm transition-all hover:shadow-md"
+                    onClick={() => selectSuggestion(task)}
+                  >
+                    <div className="font-medium mb-1 text-gray-800">{task.title}</div>
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <div className="flex items-center">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        {task.frequency}
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="h-3 w-3 mr-1" />
+                        {task.time.hours}:{task.time.minutes}
+                      </div>
+                      <div className="flex items-center">
+                        <DollarSign className="h-3 w-3 mr-1" />
+                        {task.cost}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
           
           {searchQuery && !suggestions.length && (
-            <div className="text-sm text-gray-500 mb-2 p-2">
-              No matching tasks found. You can create your own task below.
+            <div className="bg-gray-50 rounded-md p-4 text-center">
+              <p className="text-sm text-gray-600 mb-1">No matching tasks found.</p>
+              <p className="text-sm font-medium text-blue-600">You can create your own task below.</p>
             </div>
           )}
         </div>
 
+        {/* Warning banner when a task is selected from suggestions */}
+        {selectedTask && (
+          <Alert className="mt-4 bg-amber-50 border-amber-200">
+            <AlertTriangle className="h-4 w-4 text-amber-500" />
+            <AlertTitle className="text-amber-700">Not in recommended tasks</AlertTitle>
+            <AlertDescription className="text-amber-600">
+              This task is not recommended by us due to cost constraints. You can still go ahead and track it.
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Task details form */}
-        <div className="space-y-4">
+        <div className="space-y-4 mt-4">
           <div>
-            <label htmlFor="title" className="block text-sm font-medium mb-1">
+            <label htmlFor="title" className="block text-sm font-medium mb-1 text-gray-700">
               Task Title
             </label>
             <Input
@@ -218,17 +284,18 @@ const AddCustomTaskDialog = ({ onAddTask }: AddCustomTaskDialogProps) => {
               placeholder="Enter task title"
               value={customTitle}
               onChange={(e) => setCustomTitle(e.target.value)}
+              className="border-blue-200 focus:border-blue-400"
             />
           </div>
           
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">
-                <Calendar className="inline-block mr-1 h-4 w-4" />
+              <label className="block text-sm font-medium mb-1 text-gray-700">
+                <Calendar className="inline-block mr-1 h-4 w-4 text-blue-500" />
                 Frequency
               </label>
               <Select value={frequency} onValueChange={setFrequency}>
-                <SelectTrigger>
+                <SelectTrigger className="border-blue-200">
                   <SelectValue placeholder="Select frequency" />
                 </SelectTrigger>
                 <SelectContent>
@@ -242,13 +309,13 @@ const AddCustomTaskDialog = ({ onAddTask }: AddCustomTaskDialogProps) => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium mb-1">
-                <Clock className="inline-block mr-1 h-4 w-4" />
+              <label className="block text-sm font-medium mb-1 text-gray-700">
+                <Clock className="inline-block mr-1 h-4 w-4 text-blue-500" />
                 Time Required
               </label>
               <div className="flex gap-2">
                 <Select value={hours} onValueChange={setHours}>
-                  <SelectTrigger className="flex-1">
+                  <SelectTrigger className="flex-1 border-blue-200">
                     <SelectValue placeholder="HH" />
                   </SelectTrigger>
                   <SelectContent>
@@ -261,7 +328,7 @@ const AddCustomTaskDialog = ({ onAddTask }: AddCustomTaskDialogProps) => {
                 </Select>
                 <span className="flex items-center">:</span>
                 <Select value={minutes} onValueChange={setMinutes}>
-                  <SelectTrigger className="flex-1">
+                  <SelectTrigger className="flex-1 border-blue-200">
                     <SelectValue placeholder="MM" />
                   </SelectTrigger>
                   <SelectContent>
@@ -275,12 +342,12 @@ const AddCustomTaskDialog = ({ onAddTask }: AddCustomTaskDialogProps) => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium mb-1">
-                <DollarSign className="inline-block mr-1 h-4 w-4" />
+              <label className="block text-sm font-medium mb-1 text-gray-700">
+                <DollarSign className="inline-block mr-1 h-4 w-4 text-blue-500" />
                 Estimated Cost
               </label>
               <Select value={cost} onValueChange={setCost}>
-                <SelectTrigger>
+                <SelectTrigger className="border-blue-200">
                   <SelectValue placeholder="Select cost" />
                 </SelectTrigger>
                 <SelectContent>
@@ -296,11 +363,12 @@ const AddCustomTaskDialog = ({ onAddTask }: AddCustomTaskDialogProps) => {
           </div>
         </div>
         
-        <DialogFooter className="mt-6">
-          <Button variant="outline" onClick={() => setOpen(false)}>
+        <DialogFooter className="mt-8">
+          <Button variant="outline" onClick={() => setOpen(false)}
+            className="border-blue-200 text-blue-700 hover:bg-blue-50">
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>
+          <Button onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700">
             Add Task
           </Button>
         </DialogFooter>
