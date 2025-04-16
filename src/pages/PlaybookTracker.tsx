@@ -10,6 +10,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import CircularProgressChart from "@/components/CircularProgressChart";
 import DriverTasksAccordion from "@/components/DriverTasksAccordion";
 import TopNavbar from "@/components/TopNavbar";
+import AddCustomTaskDialog from "@/components/AddCustomTaskDialog";
 
 const PlaybookTracker = () => {
   const [activeFilter, setActiveFilter] = useState("all");
@@ -28,6 +29,13 @@ const PlaybookTracker = () => {
   const completedPercentage = (taskStats.completed / taskStats.total) * 100;
   const skippedPercentage = (taskStats.skipped / taskStats.total) * 100;
   const pendingPercentage = (taskStats.pending / taskStats.total) * 100;
+
+  // Handle adding a custom task
+  const handleAddCustomTask = (task: any) => {
+    console.log("Custom task added:", task);
+    // Here you would typically update your task list state
+    // For now we're just logging it
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -153,6 +161,7 @@ const PlaybookTracker = () => {
                   <SelectItem value="cost">Sort by Cost</SelectItem>
                 </SelectContent>
               </Select>
+              <AddCustomTaskDialog onAddTask={handleAddCustomTask} />
             </div>
           </div>
         </div>
