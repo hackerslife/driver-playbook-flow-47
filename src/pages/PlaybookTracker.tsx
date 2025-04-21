@@ -40,13 +40,13 @@ const PlaybookTracker = () => {
     <div className="min-h-screen bg-gray-50">
       <TopNavbar />
 
-      {/* Header and Hero Section with blue gradient background and padding */}
-      <div className="bg-gradient-to-r from-blue-500 to-cyan-600 py-10 px-6">
+      {/* Header and Hero Section - remove background, add text color to title */}
+      <div className="py-10 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Playbook Tracker Page</h1>
-              <p className="text-blue-100 text-lg max-w-xl">
+              <h1 className="text-3xl md:text-4xl font-bold text-[#8E9196] mb-2">Playbook Tracker Page</h1>
+              <p className="text-[#6E59A5] text-lg max-w-xl">
                 Track and manage all your driver tasks in one central location
               </p>
             </div>
