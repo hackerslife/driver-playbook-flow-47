@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Search, Calendar, Clock, DollarSign, ChevronDown, ChevronUp, Filter } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
@@ -40,9 +39,9 @@ const PlaybookTracker = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <TopNavbar />
-      
-      {/* Header and Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 py-10 px-6">
+
+      {/* Header and Hero Section with blue gradient background and padding */}
+      <div className="bg-gradient-to-r from-blue-500 to-cyan-600 py-10 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
@@ -57,16 +56,16 @@ const PlaybookTracker = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Top Progress Overview */}
       <div className="max-w-7xl mx-auto py-8 px-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
           <div className="bg-white p-6 rounded-xl shadow-sm flex flex-col items-center">
             <h2 className="text-xl font-semibold mb-6 text-gray-800">Overall Progress</h2>
-            <CircularProgressChart 
-              completed={completedPercentage} 
-              skipped={skippedPercentage} 
-              pending={pendingPercentage} 
+            <CircularProgressChart
+              completed={completedPercentage}
+              skipped={skippedPercentage}
+              pending={pendingPercentage}
             />
             <div className="grid grid-cols-3 gap-4 mt-6 w-full text-center">
               <div>
@@ -92,46 +91,46 @@ const PlaybookTracker = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="md:col-span-2 bg-white p-6 rounded-xl shadow-sm">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">Task Filters</h2>
             <div className="mb-6 flex flex-wrap gap-2">
-              <Button 
+              <Button
                 variant={activeFilter === "all" ? "default" : "outline"}
                 onClick={() => setActiveFilter("all")}
                 className="rounded-full"
               >
                 All
               </Button>
-              <Button 
+              <Button
                 variant={activeFilter === "onetime" ? "default" : "outline"}
                 onClick={() => setActiveFilter("onetime")}
                 className="rounded-full"
               >
                 One Time
               </Button>
-              <Button 
+              <Button
                 variant={activeFilter === "daily" ? "default" : "outline"}
                 onClick={() => setActiveFilter("daily")}
                 className="rounded-full"
               >
                 Daily
               </Button>
-              <Button 
+              <Button
                 variant={activeFilter === "weekly" ? "default" : "outline"}
                 onClick={() => setActiveFilter("weekly")}
                 className="rounded-full"
               >
                 Weekly
               </Button>
-              <Button 
+              <Button
                 variant={activeFilter === "monthly" ? "default" : "outline"}
                 onClick={() => setActiveFilter("monthly")}
                 className="rounded-full"
               >
                 Monthly
               </Button>
-              <Button 
+              <Button
                 variant={activeFilter === "yearly" ? "default" : "outline"}
                 onClick={() => setActiveFilter("yearly")}
                 className="rounded-full"
@@ -139,7 +138,7 @@ const PlaybookTracker = () => {
                 Yearly
               </Button>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="relative flex-grow">
                 <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
@@ -165,32 +164,32 @@ const PlaybookTracker = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Status Filter Buttons */}
         <div className="mb-6">
           <div className="bg-white p-4 rounded-xl shadow-sm flex justify-center gap-4">
-            <Button 
+            <Button
               variant={activeStatus === "all" ? "default" : "outline"}
               onClick={() => setActiveStatus("all")}
               className="px-6 py-2"
             >
               All Tasks ({taskStats.total})
             </Button>
-            <Button 
+            <Button
               variant={activeStatus === "pending" ? "default" : "outline"}
               onClick={() => setActiveStatus("pending")}
               className="px-6 py-2 text-blue-700 bg-blue-50 hover:bg-blue-100 border-blue-200"
             >
               Pending ({taskStats.pending})
             </Button>
-            <Button 
+            <Button
               variant={activeStatus === "completed" ? "default" : "outline"}
               onClick={() => setActiveStatus("completed")}
               className="px-6 py-2 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200"
             >
               Completed ({taskStats.completed})
             </Button>
-            <Button 
+            <Button
               variant={activeStatus === "skipped" ? "default" : "outline"}
               onClick={() => setActiveStatus("skipped")}
               className="px-6 py-2 text-amber-700 bg-amber-50 hover:bg-amber-100 border-amber-200"
@@ -199,16 +198,16 @@ const PlaybookTracker = () => {
             </Button>
           </div>
         </div>
-        
+
         {/* All Tasks Section - Single View */}
-        <DriverTasksAccordion 
-          driverId="all" 
-          searchQuery={searchQuery} 
-          activeFilter={activeFilter} 
+        <DriverTasksAccordion
+          driverId="all"
+          searchQuery={searchQuery}
+          activeFilter={activeFilter}
           activeStatus={activeStatus}
         />
       </div>
-      
+
       {/* Gamification Footer */}
       <div className="bg-white border-t py-6 px-6 sticky bottom-0 shadow-lg">
         <div className="max-w-7xl mx-auto">
