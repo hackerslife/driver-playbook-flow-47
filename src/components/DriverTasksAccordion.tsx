@@ -32,7 +32,8 @@ const DriverTasksAccordion = ({ driverId, searchQuery, activeFilter, activeStatu
       { id: "social", name: "Social Media" },
       { id: "local", name: "Local Listings" },
       { id: "email", name: "Email Marketing" },
-      { id: "ads", name: "Paid Advertising" }
+      { id: "ads", name: "Paid Advertising" },
+      { id: "content", name: "Content Asset Creation" } // Explicitly add content category
     ];
     
     const frequencies = ["Daily", "Weekly", "Monthly", "Yearly", "One Time"];
@@ -48,10 +49,10 @@ const DriverTasksAccordion = ({ driverId, searchQuery, activeFilter, activeStatu
     // Only return tasks for requested category or all tasks if in "all" view
     const relevantCategories = categoryName === "all" ? categories : categories.filter(c => {
       if (driverId === "brandprint") return ["website", "social", "local"].includes(c.id);
-      if (driverId === "content") return ["email", "social"].includes(c.id);
+      if (driverId === "content") return ["email", "social", "content"].includes(c.id);
       if (driverId === "licenses") return ["website", "ads"].includes(c.id);
-      if (driverId === "customer") return ["ads", "email"].includes(c.id);
-      if (driverId === "existing") return ["email", "local"].includes(c.id);
+      if (driverId === "customer") return ["ads", "email", "content"].includes(c.id);
+      if (driverId === "existing") return ["email", "local", "social"].includes(c.id);
       return true;
     });
     
@@ -72,7 +73,8 @@ const DriverTasksAccordion = ({ driverId, searchQuery, activeFilter, activeStatu
           description: `Description for ${category.name} Task ${i + 1}. This explains what needs to be done.`,
           resources: ["Resource 1", "Resource 2", "Help Guide"],
           completed: Math.random() > 0.7,
-          skipped: Math.random() > 0.8
+          skipped: Math.random() > 0.8,
+          category: category.name // Add category to identify content tasks
         };
       });
       
@@ -96,6 +98,7 @@ const DriverTasksAccordion = ({ driverId, searchQuery, activeFilter, activeStatu
     resources: string[];
     completed: boolean;
     skipped: boolean;
+    category?: string; // Add category to task interface
   }
   
   interface TaskGroup {

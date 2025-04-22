@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Calendar, Clock, DollarSign, ChevronDown, ChevronUp } from "lucide-react";
+import { Calendar, Clock, DollarSign, ChevronDown, ChevronUp, MessageSquare } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import GenerateContentDialog from "./GenerateContentDialog";
 
 interface TaskCardProps {
   task: {
@@ -23,6 +24,7 @@ interface TaskCardProps {
     resources: string[];
     completed: boolean;
     skipped: boolean;
+    category?: string; // Add category to identify content tasks
   };
 }
 
@@ -56,6 +58,13 @@ const TaskCard = ({ task }: TaskCardProps) => {
     if (skipped) return "Skipped";
     return "Pending";
   };
+
+  // Check if this is a content-related task
+  const isContentTask = task.category === "Content Asset Creation" || 
+                        task.title.toLowerCase().includes("content") ||
+                        task.title.toLowerCase().includes("post") ||
+                        task.title.toLowerCase().includes("social") ||
+                        task.category === "Social Media";
   
   return (
     <Card className={`overflow-hidden transition-all duration-200 ${completed ? "bg-emerald-50 border-emerald-200" : skipped ? "bg-amber-50 border-amber-200" : "hover:border-blue-200"}`}>
@@ -97,6 +106,14 @@ const TaskCard = ({ task }: TaskCardProps) => {
                   </Badge>
                 ))}
               </div>
+              
+              {/* Add Generate Content button for content-related tasks */}
+              {isContentTask && (
+                <div className="mt-4 pt-3 border-t">
+                  <h4 className="font-medium mb-2">Tools</h4>
+                  <GenerateContentDialog taskTitle={task.title} taskDescription={task.description} />
+                </div>
+              )}
             </div>
           </CollapsibleContent>
         </Collapsible>
