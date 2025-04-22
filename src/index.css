@@ -13,7 +13,6 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    /* Updated primary color to blue from purple */
     --primary: 210 100% 65%;
     --primary-foreground: 210 40% 98%;
 
@@ -44,7 +43,6 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Custom theme colors - updated to blue theme */
     --theme-purple: 210 100% 65%;
     --theme-orange: 24 95% 58%;
     --theme-blue: 210 100% 65%;
@@ -102,7 +100,6 @@
   }
 }
 
-/* Custom classes for the Google Ads Guide */
 @layer components {
   .section-header {
     @apply bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent;
@@ -132,7 +129,6 @@
     @apply bg-background shadow-sm hover:shadow-md transition-shadow border rounded-lg p-4;
   }
   
-  /* New enhanced styling */
   .guide-container {
     @apply max-w-7xl mx-auto px-4 py-8;
   }
@@ -217,7 +213,10 @@
     @apply bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20;
   }
   
-  /* Scrollbar styling */
+  .animate-shimmer {
+    animation: shimmer 8s linear infinite;
+  }
+  
   .scrollbar-thin {
     scrollbar-width: thin;
   }
