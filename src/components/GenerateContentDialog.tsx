@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Brain, Zap, Lightbulb, Target, Rocket } from "lucide-react";
+import { Sparkles, Brain, Zap, Lightbulb, Target, Rocket, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -54,7 +53,8 @@ const GenerateContentDialog = ({ taskTitle, taskDescription }: GenerateContentDi
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState("facebook");
   const [selectedStyle, setSelectedStyle] = useState<string>("professional");
-  const [generatedContent, setGeneratedContent] = useState("");
+  const [generatedContents, setGeneratedContents] = useState<Array<{id: string, content: string, liked?: boolean}>>([]);
+  const [selectedContent, setSelectedContent] = useState<string>("");
 
   const form = useForm({
     defaultValues: {
@@ -72,18 +72,53 @@ const GenerateContentDialog = ({ taskTitle, taskDescription }: GenerateContentDi
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
       const selectedStyleData = contentStyles.find(style => style.id === selectedStyle);
-      let content = "";
+      
+      const variations = [];
       
       if (data.platform === "facebook") {
-        content = `${selectedStyleData?.preview} "${taskTitle}"\n\n${taskDescription.substring(0, 100)}...\n\n#digitalmarketing #onlinepresence`;
+        variations.push({
+          id: '1',
+          content: `${selectedStyleData?.preview} "${taskTitle}"\n\n${taskDescription.substring(0, 100)}...\n\n#digitalmarketing #onlinepresence`
+        });
+        variations.push({
+          id: '2',
+          content: `Looking to enhance your ${taskTitle}? 🚀\n\n${taskDescription.substring(0, 80)}...\n\n#growthhacking #success`
+        });
+        variations.push({
+          id: '3',
+          content: `Transform your business with ${taskTitle}! ✨\n\nHere's how: ${taskDescription.substring(0, 60)}...\n\n#business #growth`
+        });
       } else if (data.platform === "instagram") {
-        content = `✨ ${selectedStyleData?.preview} ${taskTitle}! 📱\n\n${taskDescription.substring(0, 80)}...\n\n#instabusiness #growthhacking`;
+        variations.push({
+          id: '1',
+          content: `✨ ${selectedStyleData?.preview} ${taskTitle}! 📱\n\n${taskDescription.substring(0, 80)}...\n\n#instabusiness #growthhacking`
+        });
+        variations.push({
+          id: '2',
+          content: `🎯 Master your ${taskTitle} game!\n\n${taskDescription.substring(0, 70)}...\n\n#success #business`
+        });
+        variations.push({
+          id: '3',
+          content: `💫 Level up with ${taskTitle}!\n\nPro tip: ${taskDescription.substring(0, 60)}...\n\n#growth #strategy`
+        });
       } else {
-        content = `${selectedStyleData?.preview} "${taskTitle}" - Learn more about how to improve your online presence!`;
+        variations.push({
+          id: '1',
+          content: `${selectedStyleData?.preview} "${taskTitle}" - Learn more about how to improve your online presence!`
+        });
+        variations.push({
+          id: '2',
+          content: `Discover the power of ${taskTitle} - Your guide to digital success!`
+        });
+        variations.push({
+          id: '3',
+          content: `Master ${taskTitle} with our expert insights and proven strategies.`
+        });
       }
       
-      setGeneratedContent(content);
-      toast.success("Content generated successfully!");
+      setGeneratedContents(variations);
+      setSelectedContent(variations[0].content);
+      toast.success("Content variations generated successfully!");
     } catch (error) {
       console.error("Error generating content:", error);
       toast.error("Failed to generate content. Please try again.");
@@ -93,8 +128,20 @@ const GenerateContentDialog = ({ taskTitle, taskDescription }: GenerateContentDi
   };
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(generatedContent);
-    toast.success("Copied to clipboard!");
+    if (selectedContent) {
+      navigator.clipboard.writeText(selectedContent);
+      toast.success("Copied to clipboard!");
+    }
+  };
+
+  const handleFeedback = (contentId: string, isPositive: boolean) => {
+    setGeneratedContents(prev => prev.map(content => {
+      if (content.id === contentId) {
+        return { ...content, liked: isPositive };
+      }
+      return content;
+    }));
+    toast.success(isPositive ? "Thanks for the positive feedback!" : "Thanks for the feedback. We'll improve!");
   };
 
   return (
@@ -228,25 +275,51 @@ const GenerateContentDialog = ({ taskTitle, taskDescription }: GenerateContentDi
               </form>
             </Form>
             
-            {generatedContent && (
-              <div className="mt-4 border rounded-md p-4 bg-white/50 backdrop-blur-sm border-blue-200">
-                <div className="flex justify-between items-center mb-2">
-                  <Label className="text-blue-700">Generated Content</Label>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={copyToClipboard}
-                    className="gap-2 border-blue-200 hover:bg-blue-50"
+            {generatedContents.length > 0 && (
+              <div className="mt-6 space-y-4">
+                <Label className="text-blue-700">Select Generated Content</Label>
+                {generatedContents.map((content, index) => (
+                  <div
+                    key={content.id}
+                    className={`relative p-4 rounded-xl border transition-all duration-300 hover:shadow-md ${
+                      selectedContent === content.content
+                        ? "border-blue-400 bg-blue-50/50 shadow-inner"
+                        : "border-blue-200 hover:border-blue-300"
+                    }`}
+                    onClick={() => setSelectedContent(content.content)}
                   >
-                    <Zap className="h-4 w-4" />
-                    Copy
-                  </Button>
-                </div>
-                <Textarea 
-                  className="min-h-[150px] bg-white/70 border-blue-200" 
-                  value={generatedContent} 
-                  onChange={(e) => setGeneratedContent(e.target.value)}
-                />
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-blue-900">Version {index + 1}</span>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleFeedback(content.id, true);
+                          }}
+                          className={`p-1 rounded-full transition-colors ${
+                            content.liked === true ? "text-green-500 bg-green-50" : "text-gray-400 hover:text-green-500"
+                          }`}
+                        >
+                          <ThumbsUp className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleFeedback(content.id, false);
+                          }}
+                          className={`p-1 rounded-full transition-colors ${
+                            content.liked === false ? "text-red-500 bg-red-50" : "text-gray-400 hover:text-red-500"
+                          }`}
+                        >
+                          <ThumbsDown className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="text-sm bg-white/80 p-3 rounded border border-blue-100 text-blue-600">
+                      {content.content}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </Tabs>
@@ -255,11 +328,20 @@ const GenerateContentDialog = ({ taskTitle, taskDescription }: GenerateContentDi
         <DialogFooter className="mt-4">
           <Button 
             variant="outline" 
-            onClick={() => setGeneratedContent("")}
+            onClick={() => {
+              setGeneratedContents([]);
+              setSelectedContent("");
+            }}
             className="border-blue-200 hover:bg-blue-50"
           >
             Clear
           </Button>
+          {selectedContent && (
+            <Button onClick={copyToClipboard} className="gap-2">
+              <Zap className="h-4 w-4" />
+              Copy Selected
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
