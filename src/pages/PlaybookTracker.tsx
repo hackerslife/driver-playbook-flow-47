@@ -16,7 +16,6 @@ const PlaybookTracker = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeStatus, setActiveStatus] = useState("all");
 
-  // Mock data - Total tasks stats
   const taskStats = {
     total: 250,
     completed: 75,
@@ -24,43 +23,40 @@ const PlaybookTracker = () => {
     pending: 150
   };
 
-  // Calculate percentages
   const completedPercentage = (taskStats.completed / taskStats.total) * 100;
   const skippedPercentage = (taskStats.skipped / taskStats.total) * 100;
   const pendingPercentage = (taskStats.pending / taskStats.total) * 100;
 
-  // Handle adding a custom task
   const handleAddCustomTask = (task: any) => {
     console.log("Custom task added:", task);
-    // Here you would typically update your task list state
-    // For now we're just logging it
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <TopNavbar />
 
-      {/* Header and Hero Section with subtle soft blue background and darker blue title color */}
-      <div className="py-10 px-6 bg-[#D3E4FD]">
-        <div className="max-w-7xl mx-auto">
+      <div className="relative py-12 px-6 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-400/10 backdrop-blur-sm"></div>
+        <div className="max-w-7xl mx-auto relative">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-[#1E3A8A] mb-2">Playbook Tracker Page</h1>
-              <p className="text-[#3B82F6] text-lg max-w-xl">
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
+                Playbook Tracker
+              </h1>
+              <p className="text-lg text-blue-600/80 max-w-xl">
                 Track and manage all your driver tasks in one central location
               </p>
             </div>
-            <Button className="bg-white text-blue-700 hover:bg-blue-50">
+            <Button className="bg-white/80 backdrop-blur-sm text-blue-600 hover:bg-blue-50 transition-all duration-300 shadow-sm">
               Visit the Resource Center
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Top Progress Overview */}
       <div className="max-w-7xl mx-auto py-8 px-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-          <div className="bg-white p-6 rounded-xl shadow-sm flex flex-col items-center">
+          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-all duration-300">
             <h2 className="text-xl font-semibold mb-6 text-gray-800">Overall Progress</h2>
             <CircularProgressChart
               completed={completedPercentage}
@@ -92,7 +88,7 @@ const PlaybookTracker = () => {
             </div>
           </div>
 
-          <div className="md:col-span-2 bg-white p-6 rounded-xl shadow-sm">
+          <div className="md:col-span-2 bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-all duration-300">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">Task Filters</h2>
             <div className="mb-6 flex flex-wrap gap-2">
               <Button
@@ -165,41 +161,39 @@ const PlaybookTracker = () => {
           </div>
         </div>
 
-        {/* Status Filter Buttons */}
         <div className="mb-6">
-          <div className="bg-white p-4 rounded-xl shadow-sm flex justify-center gap-4">
+          <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-all duration-300 flex justify-center gap-4">
             <Button
               variant={activeStatus === "all" ? "default" : "outline"}
               onClick={() => setActiveStatus("all")}
-              className="px-6 py-2"
+              className="px-6 py-2 hover:shadow-sm transition-all duration-300"
             >
               All Tasks ({taskStats.total})
             </Button>
             <Button
               variant={activeStatus === "pending" ? "default" : "outline"}
               onClick={() => setActiveStatus("pending")}
-              className="px-6 py-2 text-blue-700 bg-blue-50 hover:bg-blue-100 border-blue-200"
+              className="px-6 py-2 bg-blue-50/80 hover:bg-blue-100/80 text-blue-600 border-blue-200 hover:shadow-sm transition-all duration-300"
             >
               Pending ({taskStats.pending})
             </Button>
             <Button
               variant={activeStatus === "completed" ? "default" : "outline"}
               onClick={() => setActiveStatus("completed")}
-              className="px-6 py-2 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200"
+              className="px-6 py-2 bg-emerald-50/80 hover:bg-emerald-100/80 text-emerald-600 border-emerald-200 hover:shadow-sm transition-all duration-300"
             >
               Completed ({taskStats.completed})
             </Button>
             <Button
               variant={activeStatus === "skipped" ? "default" : "outline"}
               onClick={() => setActiveStatus("skipped")}
-              className="px-6 py-2 text-amber-700 bg-amber-50 hover:bg-amber-100 border-amber-200"
+              className="px-6 py-2 bg-amber-50/80 hover:bg-amber-100/80 text-amber-600 border-amber-200 hover:shadow-sm transition-all duration-300"
             >
               Skipped ({taskStats.skipped})
             </Button>
           </div>
         </div>
 
-        {/* All Tasks Section - Single View */}
         <DriverTasksAccordion
           driverId="all"
           searchQuery={searchQuery}
@@ -208,8 +202,7 @@ const PlaybookTracker = () => {
         />
       </div>
 
-      {/* Gamification Footer */}
-      <div className="bg-white border-t py-6 px-6 sticky bottom-0 shadow-lg">
+      <div className="bg-white/80 backdrop-blur-sm border-t border-blue-100 py-6 px-6 sticky bottom-0 shadow-lg">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="w-full md:w-2/3">

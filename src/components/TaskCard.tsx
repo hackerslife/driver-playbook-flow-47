@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Calendar, Clock, DollarSign, ChevronDown, ChevronUp, MessageSquare } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,7 +23,7 @@ interface TaskCardProps {
     resources: string[];
     completed: boolean;
     skipped: boolean;
-    category?: string; // Add category to identify content tasks
+    category?: string;
   };
 }
 
@@ -33,33 +32,28 @@ const TaskCard = ({ task }: TaskCardProps) => {
   const [skipped, setSkipped] = useState(task.skipped);
   const [isOpen, setIsOpen] = useState(false);
   
-  // Handle mark as complete
   const handleComplete = () => {
     setCompleted(!completed);
     if (skipped) setSkipped(false);
   };
   
-  // Handle skip
   const handleSkip = () => {
     setSkipped(!skipped);
     if (completed) setCompleted(false);
   };
   
-  // Determine the badge styling
   const getBadgeStyle = () => {
     if (completed) return "bg-emerald-100 text-emerald-700";
     if (skipped) return "bg-amber-100 text-amber-700";
     return "bg-blue-100 text-blue-700";
   };
   
-  // Determine the badge text
   const getBadgeText = () => {
     if (completed) return "Completed";
     if (skipped) return "Skipped";
     return "Pending";
   };
 
-  // Check if this is a content-related task
   const isContentTask = task.category === "Content Asset Creation" || 
                         task.title.toLowerCase().includes("content") ||
                         task.title.toLowerCase().includes("post") ||
@@ -67,26 +61,32 @@ const TaskCard = ({ task }: TaskCardProps) => {
                         task.category === "Social Media";
   
   return (
-    <Card className={`overflow-hidden transition-all duration-200 ${completed ? "bg-emerald-50 border-emerald-200" : skipped ? "bg-amber-50 border-amber-200" : "hover:border-blue-200"}`}>
+    <Card className={`overflow-hidden transition-all duration-300 hover:shadow-md ${
+      completed 
+        ? "bg-gradient-to-br from-emerald-50 to-emerald-100/50 border-emerald-200" 
+        : skipped 
+        ? "bg-gradient-to-br from-amber-50 to-amber-100/50 border-amber-200" 
+        : "bg-gradient-to-br from-white to-blue-50/30 hover:border-blue-200"
+    }`}>
       <CardHeader className="p-4 pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-semibold">{task.title}</CardTitle>
-          <Badge className={getBadgeStyle()}>
+          <Badge className={`${getBadgeStyle()} transition-colors duration-300`}>
             {getBadgeText()}
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="p-4 pt-2">
         <div className="flex flex-wrap gap-3 mt-2 text-sm text-gray-600">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 bg-white/50 px-2 py-1 rounded-full">
             <Calendar className="h-4 w-4" />
             <span>{task.frequency} ({task.frequencyDetail})</span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 bg-white/50 px-2 py-1 rounded-full">
             <Clock className="h-4 w-4" />
             <span>{task.time.hours}:{task.time.minutes}</span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 bg-white/50 px-2 py-1 rounded-full">
             <DollarSign className="h-4 w-4" />
             <span>{task.cost}</span>
           </div>
@@ -107,7 +107,6 @@ const TaskCard = ({ task }: TaskCardProps) => {
                 ))}
               </div>
               
-              {/* Add Generate Content button for content-related tasks */}
               {isContentTask && (
                 <div className="mt-4 pt-3 border-t">
                   <h4 className="font-medium mb-2">Tools</h4>
@@ -118,7 +117,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
           </CollapsibleContent>
         </Collapsible>
       </CardContent>
-      <CardFooter className="p-4 pt-0 flex justify-between">
+      <CardFooter className="p-4 pt-0 flex justify-between border-t border-gray-100">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium">Mark as Done</span>
           <Switch checked={completed} onCheckedChange={handleComplete} />
