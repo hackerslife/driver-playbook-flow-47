@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Brain, Zap } from "lucide-react";
+import { Sparkles, Brain, Zap, Lightbulb, Target, Rocket } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -18,9 +18,42 @@ interface GenerateContentDialogProps {
   taskDescription: string;
 }
 
+type ContentStyle = {
+  id: string;
+  name: string;
+  description: string;
+  icon: React.ReactNode;
+  preview: string;
+};
+
+const contentStyles: ContentStyle[] = [
+  {
+    id: "professional",
+    name: "Professional & Formal",
+    description: "Perfect for business audiences and formal communications",
+    icon: <Target className="h-5 w-5 text-blue-500" />,
+    preview: "Enhance your digital strategy with our comprehensive guide on...",
+  },
+  {
+    id: "casual",
+    name: "Casual & Friendly",
+    description: "Engaging and conversational tone for social media",
+    icon: <Lightbulb className="h-5 w-5 text-amber-500" />,
+    preview: "Ready to level up your online game? 🚀 Check out our latest tips on...",
+  },
+  {
+    id: "innovative",
+    name: "Innovative & Bold",
+    description: "Stand out with creative and attention-grabbing content",
+    icon: <Rocket className="h-5 w-5 text-purple-500" />,
+    preview: "🌟 Transform your digital presence with cutting-edge strategies...",
+  },
+];
+
 const GenerateContentDialog = ({ taskTitle, taskDescription }: GenerateContentDialogProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState("facebook");
+  const [selectedStyle, setSelectedStyle] = useState<string>("professional");
   const [generatedContent, setGeneratedContent] = useState("");
 
   const form = useForm({
@@ -38,14 +71,17 @@ const GenerateContentDialog = ({ taskTitle, taskDescription }: GenerateContentDi
     setIsGenerating(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
+      const selectedStyleData = contentStyles.find(style => style.id === selectedStyle);
       let content = "";
+      
       if (data.platform === "facebook") {
-        content = `📢 Need to improve your online presence? Our team just published a guide on "${taskTitle}"!\n\n${taskDescription.substring(0, 100)}...\n\nClick the link in our bio to learn more! #digitalmarketing #onlinepresence #businessgrowth`;
+        content = `${selectedStyleData?.preview} "${taskTitle}"\n\n${taskDescription.substring(0, 100)}...\n\n#digitalmarketing #onlinepresence`;
       } else if (data.platform === "instagram") {
-        content = `✨ Transform your business with our latest tips on ${taskTitle}! 📱\n\n${taskDescription.substring(0, 80)}...\n\nDouble tap if you're ready to level up your online game! 👇\n\n#instabusiness #digitalmarketing #growthhacking`;
+        content = `✨ ${selectedStyleData?.preview} ${taskTitle}! 📱\n\n${taskDescription.substring(0, 80)}...\n\n#instabusiness #growthhacking`;
       } else {
-        content = `Want to boost your online visibility? Our new guide on "${taskTitle}" shows you exactly how to stand out from the competition. Check it out now!`;
+        content = `${selectedStyleData?.preview} "${taskTitle}" - Learn more about how to improve your online presence!`;
       }
+      
       setGeneratedContent(content);
       toast.success("Content generated successfully!");
     } catch (error) {
@@ -71,7 +107,7 @@ const GenerateContentDialog = ({ taskTitle, taskDescription }: GenerateContentDi
           <Sparkles className="h-4 w-4 animate-pulse text-purple-500" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] bg-gradient-to-br from-white to-blue-50/30 backdrop-blur-sm border-blue-200">
+      <DialogContent className="sm:max-w-[800px] bg-gradient-to-br from-white to-blue-50/30 backdrop-blur-sm border-blue-200">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
             <Brain className="h-5 w-5 animate-pulse text-blue-500" />
@@ -80,9 +116,36 @@ const GenerateContentDialog = ({ taskTitle, taskDescription }: GenerateContentDi
           </DialogTitle>
         </DialogHeader>
         
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-purple-400/5 rounded-lg pointer-events-none" />
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full relative">
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {contentStyles.map((style) => (
+              <div
+                key={style.id}
+                onClick={() => setSelectedStyle(style.id)}
+                className={`relative p-4 rounded-xl border transition-all duration-300 cursor-pointer hover:shadow-md ${
+                  selectedStyle === style.id
+                    ? "border-blue-400 bg-blue-50/50 shadow-inner"
+                    : "border-blue-200 hover:border-blue-300"
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  {style.icon}
+                  <h3 className="font-medium text-blue-900">{style.name}</h3>
+                </div>
+                <p className="text-sm text-blue-600/70 mb-3">{style.description}</p>
+                <div className="text-xs bg-white/80 p-2 rounded border border-blue-100 text-blue-600">
+                  {style.preview}
+                </div>
+                {selectedStyle === style.id && (
+                  <div className="absolute -top-2 -right-2 bg-blue-500 text-white p-1 rounded-full">
+                    <Sparkles className="h-4 w-4" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid grid-cols-3 mb-4 bg-white/50 backdrop-blur-sm">
               <TabsTrigger value="facebook" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-100 data-[state=active]:to-blue-50">
                 Facebook
