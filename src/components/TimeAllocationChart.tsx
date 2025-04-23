@@ -94,10 +94,11 @@ const TimeAllocationChart = ({ viewBy }: TimeAllocationChartProps) => {
             layout="horizontal" 
             align="center"
             payload={data.map(item => ({
-              dataKey: item.name,
-              color: item.color,
               value: item.name,
-              payload: item
+              type: "square",
+              color: item.color,
+              strokeDasharray: "none",
+              id: item.name,
             }))}
           >
             <ChartLegendContent />
