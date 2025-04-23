@@ -1,8 +1,7 @@
+
 import { useState } from "react";
-import { Calendar, Clock, DollarSign, ChevronDown, ChevronUp, MessageSquare } from "lucide-react";
+import { Calendar, Clock, DollarSign, ChevronDown, ChevronUp } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Collapsible,
@@ -10,6 +9,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import GenerateContentDialog from "./GenerateContentDialog";
+import { useNavigate } from "react-router-dom";
 
 interface TaskCardProps {
   task: {
@@ -24,69 +24,49 @@ interface TaskCardProps {
     completed: boolean;
     skipped: boolean;
     category?: string;
+    recommendation?: string;
+    type?: string;
   };
+  hideStatus?: boolean;
 }
 
-const TaskCard = ({ task }: TaskCardProps) => {
-  const [completed, setCompleted] = useState(task.completed);
-  const [skipped, setSkipped] = useState(task.skipped);
+/**
+ * A minimal TaskCard for Playbook page, with no completion state UI.
+ */
+const TaskCard = ({ task, hideStatus = true }: TaskCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  
-  const handleComplete = () => {
-    setCompleted(!completed);
-    if (skipped) setSkipped(false);
-  };
-  
-  const handleSkip = () => {
-    setSkipped(!skipped);
-    if (completed) setCompleted(false);
-  };
-  
-  const getBadgeStyle = () => {
-    if (completed) return "bg-emerald-100 text-emerald-700";
-    if (skipped) return "bg-amber-100 text-amber-700";
-    return "bg-blue-100 text-blue-700";
-  };
-  
-  const getBadgeText = () => {
-    if (completed) return "Completed";
-    if (skipped) return "Skipped";
-    return "Pending";
+  const navigate = useNavigate();
+
+  // Identify content creation task for GenerateContentDialog display
+  const isContentTask = task.category === "Content Asset Creation" || 
+    task.title.toLowerCase().includes("content") ||
+    task.title.toLowerCase().includes("post") ||
+    task.title.toLowerCase().includes("social") ||
+    task.category === "Social Media";
+
+  // Handle resource badge click — go to resource guide with relevant props
+  const handleResourceClick = (resourceName: string) => {
+    navigate(`/resource-guide/${encodeURIComponent(task.id)}/${encodeURIComponent(resourceName)}`, { state: { task } });
   };
 
-  const isContentTask = task.category === "Content Asset Creation" || 
-                        task.title.toLowerCase().includes("content") ||
-                        task.title.toLowerCase().includes("post") ||
-                        task.title.toLowerCase().includes("social") ||
-                        task.category === "Social Media";
-  
   return (
-    <Card className={`overflow-hidden transition-all duration-300 hover:shadow-md ${
-      completed 
-        ? "bg-gradient-to-br from-emerald-50 to-emerald-100/50 border-emerald-200" 
-        : skipped 
-        ? "bg-gradient-to-br from-amber-50 to-amber-100/50 border-amber-200" 
-        : "bg-gradient-to-br from-white to-blue-50/30 hover:border-blue-200"
-    }`}>
+    <Card className="overflow-hidden transition-all duration-300 bg-white border border-blue-100 hover:shadow-md">
       <CardHeader className="p-4 pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-semibold">{task.title}</CardTitle>
-          <Badge className={`${getBadgeStyle()} transition-colors duration-300`}>
-            {getBadgeText()}
-          </Badge>
         </div>
       </CardHeader>
       <CardContent className="p-4 pt-2">
         <div className="flex flex-wrap gap-3 mt-2 text-sm text-gray-600">
-          <div className="flex items-center gap-1 bg-white/50 px-2 py-1 rounded-full">
+          <div className="flex items-center gap-1 bg-white/50 px-2 py-1 rounded-full border">
             <Calendar className="h-4 w-4" />
             <span>{task.frequency} ({task.frequencyDetail})</span>
           </div>
-          <div className="flex items-center gap-1 bg-white/50 px-2 py-1 rounded-full">
+          <div className="flex items-center gap-1 bg-white/50 px-2 py-1 rounded-full border">
             <Clock className="h-4 w-4" />
             <span>{task.time.hours}:{task.time.minutes}</span>
           </div>
-          <div className="flex items-center gap-1 bg-white/50 px-2 py-1 rounded-full">
+          <div className="flex items-center gap-1 bg-white/50 px-2 py-1 rounded-full border">
             <DollarSign className="h-4 w-4" />
             <span>{task.cost}</span>
           </div>
@@ -101,7 +81,12 @@ const TaskCard = ({ task }: TaskCardProps) => {
               <h4 className="font-medium mb-1">Resources</h4>
               <div className="flex flex-wrap gap-2">
                 {task.resources.map((resource, i) => (
-                  <Badge key={i} variant="outline" className="text-blue-600 hover:bg-blue-50 cursor-pointer">
+                  <Badge
+                    key={i}
+                    variant="outline"
+                    className="text-blue-600 hover:bg-blue-50 cursor-pointer border-blue-400"
+                    onClick={() => handleResourceClick(resource)}
+                  >
                     {resource}
                   </Badge>
                 ))}
@@ -117,28 +102,25 @@ const TaskCard = ({ task }: TaskCardProps) => {
           </CollapsibleContent>
         </Collapsible>
       </CardContent>
-      <CardFooter className="p-4 pt-0 flex justify-between border-t border-gray-100">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">Mark as Done</span>
-          <Switch checked={completed} onCheckedChange={handleComplete} />
-        </div>
-        <div className="flex items-center gap-2">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={handleSkip}
-            className={skipped ? "text-amber-600" : "text-gray-600"}
-          >
-            {skipped ? "Unskip" : "Skip"}
-          </Button>
-          <Collapsible open={isOpen} onOpenChange={setIsOpen} className="inline">
-            <CollapsibleTrigger asChild>
-              <Button variant="ghost" size="icon">
-                {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-              </Button>
-            </CollapsibleTrigger>
-          </Collapsible>
-        </div>
+      <CardFooter className="p-4 pt-0 flex justify-end border-t border-gray-100">
+        <Collapsible open={isOpen} onOpenChange={setIsOpen} className="inline">
+          <CollapsibleTrigger asChild>
+            <button
+              className="text-blue-700 hover:text-blue-900 font-medium text-sm ml-auto flex gap-1 items-center"
+              aria-label={isOpen ? "Show Less" : "Show More"}
+            >
+              {isOpen ? (
+                <>
+                  Show Less <ChevronUp className="h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  Show More <ChevronDown className="h-4 w-4" />
+                </>
+              )}
+            </button>
+          </CollapsibleTrigger>
+        </Collapsible>
       </CardFooter>
     </Card>
   );
