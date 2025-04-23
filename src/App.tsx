@@ -6,6 +6,7 @@ import PlaybookTracker from "./pages/PlaybookTracker";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import GoogleAdsGuide from "./pages/GoogleAdsGuide";
+import Playbook from "./pages/Playbook";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<Index />} />
         <Route path="/tracker" element={<PlaybookTracker />} />
         <Route path="/google-ads-guide" element={<GoogleAdsGuide />} />
+        <Route path="/playbook" element={<Playbook />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
