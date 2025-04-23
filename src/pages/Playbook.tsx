@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Search, Filter, ChevronDown } from "lucide-react";
+import { Search, Filter, ChevronDown, ArrowRight, Save } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,9 @@ import TopNavbar from "@/components/TopNavbar";
 import DriverTasksAccordion from "@/components/DriverTasksAccordion";
 import BudgetAllocationChart from "@/components/BudgetAllocationChart";
 import TimeAllocationChart from "@/components/TimeAllocationChart";
+import { useNavigate } from "react-router-dom";
+import ConfettiBurst from "@/components/ConfettiBurst";
+import { toast } from "@/hooks/use-toast";
 
 const Playbook = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -18,6 +20,10 @@ const Playbook = () => {
   const [activeStatus, setActiveStatus] = useState("all");
   const [budgetViewBy, setBudgetViewBy] = useState("driver");
   const [timeViewBy, setTimeViewBy] = useState("driver");
+  const [saved, setSaved] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  const navigate = useNavigate();
 
   // Business information
   const businessInfo = {
@@ -28,10 +34,26 @@ const Playbook = () => {
     revenue: "$250,000 - $500,000"
   };
 
+  // Save playbook handler
+  const handleSavePlaybook = () => {
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 2000);
+    setSaved(true);
+    toast({
+      title: "Playbook Saved!",
+      description: "Your playbook has been saved. You're one step closer to marketing success 🎉",
+    });
+  };
+
+  // Tracker navigation
+  const handleGoToTracker = () => {
+    navigate("/tracker");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <TopNavbar />
-
+      {showConfetti && <ConfettiBurst />}
       <div className="relative py-12 px-6 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-400/10 backdrop-blur-sm"></div>
         <div className="max-w-7xl mx-auto relative">
@@ -105,6 +127,48 @@ const Playbook = () => {
           </TabsContent>
           
           <TabsContent value="tasks">
+            {/* CTA Buttons - Save/Go to Tracker */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 mb-8 justify-between">
+              {!saved ? (
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-violet-500 to-blue-500 text-white shadow-md hover:scale-105 transition-transform"
+                  onClick={handleSavePlaybook}
+                  aria-label="Save playbook"
+                >
+                  <Save className="mr-2" size={20} />
+                  Save My Playbook
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-blue-500 to-violet-500 text-white shadow-md hover:scale-105 transition-transform animate-enter"
+                  onClick={handleGoToTracker}
+                  aria-label="Go to tracker"
+                >
+                  <ArrowRight className="mr-2" size={20} />
+                  Go to Tracker
+                </Button>
+              )}
+              {/* Motivation/feedback small tip */}
+              {saved && (
+                <div className="flex items-center gap-2 text-blue-700 font-medium px-4 py-2 rounded-lg bg-blue-50">
+                  <span>🎯 Did you love your playbook?</span>
+                  <button
+                    aria-label="Yes, I love it!"
+                    onClick={() =>
+                      toast({
+                        title: "Thank you!",
+                        description: "Glad you liked your playbook. Let's win together!",
+                      })
+                    }
+                    className="ml-1 hover:scale-125 transition-transform"
+                  >
+                    <span role="img" aria-label="Thumb up">👍</span>
+                  </button>
+                </div>
+              )}
+            </div>
             {/* Task Filters and Search */}
             <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
               <h2 className="text-2xl font-semibold text-blue-700 mb-4">Marketing Tasks</h2>
