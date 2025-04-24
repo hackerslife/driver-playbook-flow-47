@@ -1,5 +1,6 @@
+
 import { useState } from "react";
-import { Search, Filter, ChevronDown, ArrowRight, Save } from "lucide-react";
+import { Search, Filter, ChevronDown, ArrowRight, Save, RefreshCcw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,24 @@ import { useNavigate } from "react-router-dom";
 import ConfettiBurst from "@/components/ConfettiBurst";
 import { toast } from "@/hooks/use-toast";
 
+const getCurrentMonthYear = () => {
+  const date = new Date();
+  return {
+    month: date.toLocaleString('default', { month: 'long' }),
+    year: date.getFullYear()
+  };
+};
+
+const getNextMonth = () => {
+  const date = new Date();
+  date.setMonth(date.getMonth() + 1);
+  return date.toLocaleString('default', { month: 'long' });
+};
+
 const Playbook = () => {
+  const { month, year } = getCurrentMonthYear();
+  const nextMonth = getNextMonth();
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
   const [activeStatus, setActiveStatus] = useState("all");
@@ -22,17 +40,16 @@ const Playbook = () => {
   const [timeViewBy, setTimeViewBy] = useState("driver");
   const [saved, setSaved] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
-
-  const navigate = useNavigate();
-
-  // Business information
-  const businessInfo = {
+  const [businessInfo, setBusinessInfo] = useState({
     industry: "Home Services",
     service: "Plumbing & HVAC",
     goal: "Increase Local Awareness",
     maturity: "Established (3-5 years)",
     revenue: "$250,000 - $500,000"
-  };
+  });
+  const [isEditing, setIsEditing] = useState(false);
+
+  const navigate = useNavigate();
 
   // Save playbook handler
   const handleSavePlaybook = () => {
@@ -45,38 +62,143 @@ const Playbook = () => {
     });
   };
 
-  // Tracker navigation
+  const handleGeneratePlaybook = () => {
+    toast({
+      title: `Generating ${nextMonth}'s Playbook`,
+      description: "Analyzing your progress and creating an optimized playbook...",
+    });
+    // Add logic for generating new playbook
+  };
+
+  const handleKeepPlaybook = () => {
+    toast({
+      description: `Continuing with ${month}'s playbook`,
+    });
+  };
+
+  // Navigation handlers
   const handleGoToTracker = () => {
     navigate("/tracker");
+  };
+
+  const handleUpdateBusinessInfo = () => {
+    setIsEditing(false);
+    toast({
+      title: "Business Info Updated",
+      description: "Your changes have been saved successfully.",
+    });
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <TopNavbar />
       {showConfetti && <ConfettiBurst />}
+      
+      {/* Header Section */}
       <div className="relative py-12 px-6 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-400/10 backdrop-blur-sm"></div>
         <div className="max-w-7xl mx-auto relative">
-          <div>
+          <div className="flex flex-col items-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
-              Marketing Playbook
+              {month} {year}'s Marketing Playbook
             </h1>
-            <p className="text-lg text-blue-600/80 max-w-xl mb-8">
+            <p className="text-lg text-blue-600/80 max-w-xl text-center mb-6">
               Your customized marketing strategy and task plan
             </p>
+            
+            {/* Monthly Update Alert */}
+            {new Date().getDate() >= 25 && (
+              <div className="w-full max-w-2xl bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+                <p className="text-amber-800 mb-3">Your current playbook will be outdated soon. Would you like to:</p>
+                <div className="flex gap-4 justify-center">
+                  <Button
+                    onClick={handleGeneratePlaybook}
+                    className="bg-amber-600 hover:bg-amber-700"
+                  >
+                    <RefreshCcw className="mr-2 h-4 w-4" />
+                    Generate {nextMonth}'s Playbook
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleKeepPlaybook}
+                    className="border-amber-600 text-amber-600 hover:bg-amber-50"
+                  >
+                    Keep Current Playbook
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
-          
-          {/* Business Information Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-            <BusinessInfoCard title="Industry" value={businessInfo.industry} />
-            <BusinessInfoCard title="Service" value={businessInfo.service} />
-            <BusinessInfoCard title="Marketing Goal" value={businessInfo.goal} />
-            <BusinessInfoCard title="Business Maturity" value={businessInfo.maturity} />
-            <BusinessInfoCard title="Annual Revenue" value={businessInfo.revenue} />
+
+          {/* Business Information Cards with Edit Mode */}
+          <div className="mb-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-blue-700">Business Information</h2>
+              <Button
+                variant="outline"
+                onClick={() => isEditing ? handleUpdateBusinessInfo() : setIsEditing(true)}
+              >
+                {isEditing ? 'Save Changes' : 'Edit Information'}
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
+              {Object.entries(businessInfo).map(([key, value]) => (
+                <Card key={key} className="backdrop-blur-sm bg-white/80 hover:shadow-md transition-all border border-blue-100">
+                  <CardHeader className="py-4 px-5">
+                    <CardTitle className="text-sm text-gray-600 capitalize">{key}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="py-0 px-5 pb-4">
+                    {isEditing ? (
+                      <Input
+                        value={value}
+                        onChange={(e) => setBusinessInfo(prev => ({
+                          ...prev,
+                          [key]: e.target.value
+                        }))}
+                        className="mt-1"
+                      />
+                    ) : (
+                      <p className="font-semibold text-blue-700">{value}</p>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            {/* Generate Playbook Button */}
+            {isEditing && (
+              <Button 
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2"
+                onClick={handleGeneratePlaybook}
+              >
+                <RefreshCcw className="mr-2 h-4 w-4" />
+                Generate Updated Playbook
+              </Button>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-4 mb-8 justify-center">
+            <Button
+              size="lg"
+              className={`${saved ? 'bg-green-600 hover:bg-green-700' : 'bg-gradient-to-r from-violet-500 to-blue-500 hover:from-violet-600 hover:to-blue-600'} text-white shadow-md transition-all`}
+              onClick={handleSavePlaybook}
+            >
+              <Save className="mr-2" size={20} />
+              {saved ? 'Playbook Saved' : 'Save Playbook'}
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-blue-500 text-blue-600 hover:bg-blue-50"
+              onClick={handleGoToTracker}
+            >
+              Track Your Tasks
+            </Button>
           </div>
         </div>
       </div>
 
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto py-8 px-6">
         <Tabs defaultValue="summary" className="w-full">
           <TabsList className="mb-8 w-full flex justify-center">
@@ -252,20 +374,6 @@ const Playbook = () => {
         </Tabs>
       </div>
     </div>
-  );
-};
-
-// Business info card component
-const BusinessInfoCard = ({ title, value }: { title: string; value: string }) => {
-  return (
-    <Card className="backdrop-blur-sm bg-white/80 hover:shadow-md transition-all border border-blue-100">
-      <CardHeader className="py-4 px-5">
-        <CardTitle className="text-sm text-gray-600">{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="py-0 px-5 pb-4">
-        <p className="font-semibold text-blue-700">{value}</p>
-      </CardContent>
-    </Card>
   );
 };
 
