@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import ConfettiBurst from "@/components/ConfettiBurst";
 import { toast } from "@/hooks/use-toast";
 import GeneratePlaybookProgress from "@/components/GeneratePlaybookProgress";
+import OptimizationStreak from "@/components/OptimizationStreak";
 
 const getCurrentMonthYear = () => {
   const date = new Date();
@@ -50,6 +51,8 @@ const Playbook = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isEmptyMonth, setIsEmptyMonth] = useState(false);
   const [activeMonth, setActiveMonth] = useState<"current" | "next">("current");
+  const [hasLastMonthFeedback, setHasLastMonthFeedback] = useState(false);
+  const [streakCount, setStreakCount] = useState(1);
 
   const navigate = useNavigate();
 
@@ -137,6 +140,14 @@ const Playbook = () => {
                 : "Your customized marketing strategy and task plan"}
             </p>
             
+            <div className="mb-8">
+              <OptimizationStreak 
+                isNextMonth={activeMonth === "next"}
+                hasLastMonthFeedback={hasLastMonthFeedback}
+                streakCount={streakCount}
+              />
+            </div>
+
             {activeMonth === "next" && (
               <div className="w-full max-w-2xl bg-white border border-amber-200 rounded-lg p-6 mb-6">
                 <p className="text-gray-800 mb-6 text-center">
