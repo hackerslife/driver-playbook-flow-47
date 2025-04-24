@@ -27,13 +27,13 @@ const fairPricingItems = [
   {
     label: "Licensing",
     price: "NA",
-    icon: "licensing",
+    icon: "badge-percent",
   },
   {
     label: "Consultant",
     price: "$50 - $70",
     detail: "5% - 10% of Media cost or per hour",
-    icon: "licensing",
+    icon: "badge-percent",
   },
 ];
 
@@ -142,7 +142,7 @@ export default function ResourceGuide() {
             Resource Guide: <span className="font-extrabold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text">{decodeURIComponent(resourceName ?? "")}</span>
           </h1>
           <p className="text-gray-600 dark:text-gray-200 text-base md:text-lg text-center max-w-2xl">
-            AI has analyzed your playbook task. Here’s the best approach for your business—and the full landscape at a glance.
+            AI has analyzed your playbook task. Here's the best approach for your business—and the full landscape at a glance.
           </p>
         </header>
         <div className="flex flex-col md:flex-row gap-4 mb-7">

@@ -1,11 +1,11 @@
 
-import { DollarSign, Building, Licensing } from "lucide-react";
+import { DollarSign, Building, BadgePercent } from "lucide-react";
 
 interface FairPricingItem {
   label: string;
   price: string;
   detail?: string;
-  icon: "dollar-sign" | "building" | "licensing";
+  icon: "dollar-sign" | "building" | "badge-percent";
 }
 
 interface FairPricingGridProps {
@@ -15,7 +15,7 @@ interface FairPricingGridProps {
 const ICONS = {
   "dollar-sign": <DollarSign className="h-10 w-10 text-blue-500" strokeWidth={2.5} />,
   "building": <Building className="h-10 w-10 text-blue-500" strokeWidth={2.5} />,
-  "licensing": <Licensing className="h-10 w-10 text-blue-500" strokeWidth={2.5} />,
+  "badge-percent": <BadgePercent className="h-10 w-10 text-blue-500" strokeWidth={2.5} />,
 };
 
 export default function FairPricingGrid({ items }: FairPricingGridProps) {
