@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Search, Filter, ChevronDown, ArrowRight, RefreshCcw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -50,6 +49,7 @@ const Playbook = () => {
   });
   const [isGenerating, setIsGenerating] = useState(false);
   const [isEmptyMonth, setIsEmptyMonth] = useState(false);
+  const [activeMonth, setActiveMonth] = useState<"current" | "next">("current");
 
   const navigate = useNavigate();
 
@@ -76,7 +76,6 @@ const Playbook = () => {
     navigate("/tracker");
   };
 
-  // Function to save playbook and show confetti
   const handleSavePlaybook = () => {
     setSaved(true);
     setShowConfetti(true);
@@ -95,22 +94,50 @@ const Playbook = () => {
       <TopNavbar />
       {showConfetti && <ConfettiBurst />}
       
-      {/* Header Section */}
+      <div className="w-full flex justify-center pt-6">
+        <div className="inline-flex rounded-lg border border-blue-200 p-1 bg-white shadow-sm">
+          <Button
+            variant={activeMonth === "current" ? "default" : "ghost"}
+            className={`rounded-md px-6 py-2 text-sm font-medium transition-all ${
+              activeMonth === "current" 
+                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white" 
+                : "text-gray-500"
+            }`}
+            onClick={() => setActiveMonth("current")}
+          >
+            Current Month
+          </Button>
+          <Button
+            variant={activeMonth === "next" ? "default" : "ghost"}
+            className={`rounded-md px-6 py-2 text-sm font-medium transition-all ${
+              activeMonth === "next" 
+                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white" 
+                : "text-gray-500"
+            }`}
+            onClick={() => {
+              setActiveMonth("next");
+              setIsEmptyMonth(true);
+            }}
+          >
+            Next Month
+          </Button>
+        </div>
+      </div>
+
       <div className="relative py-12 px-6 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-400/10 backdrop-blur-sm"></div>
         <div className="max-w-7xl mx-auto relative">
           <div className="flex flex-col items-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
-              {isEmptyMonth ? `${nextMonth} ${year}'s Marketing Playbook` : `${month} ${year}'s Marketing Playbook`}
+              {activeMonth === "next" ? `${nextMonth} ${year}'s Marketing Playbook` : `${month} ${year}'s Marketing Playbook`}
             </h1>
             <p className="text-lg text-blue-600/80 max-w-xl text-center mb-6">
-              {isEmptyMonth 
-                ? "Your previous month's playbook is ready for an upgrade. Generate a new playbook optimized with your progress."
+              {activeMonth === "next"
+                ? "Generate your next month's playbook optimized with your progress."
                 : "Your customized marketing strategy and task plan"}
             </p>
             
-            {/* Empty Month State or Monthly Update Alert */}
-            {isEmptyMonth ? (
+            {activeMonth === "next" && (
               <div className="w-full max-w-2xl bg-white border border-amber-200 rounded-lg p-6 mb-6">
                 <p className="text-gray-800 mb-6 text-center">
                   Your previous month's playbook is obsolete. We've analyzed your progress and prepared optimized recommendations for {nextMonth}.
@@ -127,100 +154,80 @@ const Playbook = () => {
                   <Button
                     variant="outline"
                     size="lg"
-                    onClick={handleKeepPlaybook}
+                    onClick={() => {
+                      setActiveMonth("current");
+                      setIsEmptyMonth(false);
+                    }}
                     className="border-blue-600 text-blue-600 hover:bg-blue-50"
                   >
                     Keep Using {month}'s Playbook
                   </Button>
                 </div>
               </div>
-            ) : (
-              new Date().getDate() >= 25 && (
-                <div className="w-full max-w-2xl bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
-                  <p className="text-amber-800 mb-3">Your current playbook will be outdated soon. Would you like to:</p>
-                  <div className="flex gap-4 justify-center">
-                    <Button
-                      onClick={() => setIsEmptyMonth(true)}
-                      className="bg-amber-600 hover:bg-amber-700"
-                    >
-                      <RefreshCcw className="mr-2 h-4 w-4" />
-                      Preview {nextMonth}'s Playbook
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={handleKeepPlaybook}
-                      className="border-amber-600 text-amber-600 hover:bg-amber-50"
-                    >
-                      Keep Current Playbook
-                    </Button>
-                  </div>
-                </div>
-              )
             )}
           </div>
 
-          {/* Business Information Cards */}
-          <div className="mb-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-              {Object.entries(businessInfo).map(([key, value]) => (
-                <Card key={key} className="backdrop-blur-sm bg-white/80 hover:shadow-md transition-all border border-blue-100">
-                  <CardHeader className="py-4 px-5">
-                    <CardTitle className="text-sm text-gray-600 capitalize">{key}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="py-0 px-5 pb-4">
-                    <Input
-                      value={value}
-                      onChange={(e) => setBusinessInfo(prev => ({
-                        ...prev,
-                        [key]: e.target.value
-                      }))}
-                      className="mt-1 bg-transparent border-blue-200 focus:border-blue-400"
-                    />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-            {/* Generate Playbook Button */}
-            <Button 
-              className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2"
-              onClick={handleGeneratePlaybook}
-            >
-              <RefreshCcw className="mr-2 h-4 w-4" />
-              Generate Updated Playbook
-            </Button>
-          </div>
+          {(activeMonth === "current" || !isEmptyMonth) && (
+            <>
+              <div className="mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                  {Object.entries(businessInfo).map(([key, value]) => (
+                    <Card key={key} className="backdrop-blur-sm bg-white/80 hover:shadow-md transition-all border border-blue-100">
+                      <CardHeader className="py-4 px-5">
+                        <CardTitle className="text-sm text-gray-600 capitalize">{key}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="py-0 px-5 pb-4">
+                        <Input
+                          value={value}
+                          onChange={(e) => setBusinessInfo(prev => ({
+                            ...prev,
+                            [key]: e.target.value
+                          }))}
+                          className="mt-1 bg-transparent border-blue-200 focus:border-blue-400"
+                        />
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+                <Button 
+                  className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2"
+                  onClick={handleGeneratePlaybook}
+                >
+                  <RefreshCcw className="mr-2 h-4 w-4" />
+                  Generate Updated Playbook
+                </Button>
+              </div>
 
-          {/* Progress Bar during generation */}
-          {isGenerating && (
-            <div className="my-8">
-              <GeneratePlaybookProgress />
-            </div>
-          )}
+              {isGenerating && (
+                <div className="my-8">
+                  <GeneratePlaybookProgress />
+                </div>
+              )}
 
-          {/* Action Buttons */}
-          {!isEmptyMonth && !isGenerating && (
-            <div className="flex flex-wrap gap-4 mb-8 justify-center">
-              <Button
-                size="lg"
-                onClick={handleSavePlaybook}
-                className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-md"
-              >
-                Save My Playbook
-              </Button>
-              <Button
-                size="lg"
-                onClick={handleGoToTracker}
-                className="bg-gradient-to-r from-violet-500 to-blue-500 hover:from-violet-600 hover:to-blue-600 text-white shadow-md"
-              >
-                <ArrowRight className="mr-2" size={20} />
-                Track Your Tasks
-              </Button>
-            </div>
+              {!isEmptyMonth && !isGenerating && (
+                <div className="flex flex-wrap gap-4 mb-8 justify-center">
+                  <Button
+                    size="lg"
+                    onClick={handleSavePlaybook}
+                    className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-md"
+                  >
+                    Save My Playbook
+                  </Button>
+                  <Button
+                    size="lg"
+                    onClick={handleGoToTracker}
+                    className="bg-gradient-to-r from-violet-500 to-blue-500 hover:from-violet-600 hover:to-blue-600 text-white shadow-md"
+                  >
+                    <ArrowRight className="mr-2" size={20} />
+                    Track Your Tasks
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
 
-      {/* Main Content - Only show if not empty month and not generating */}
       {!isEmptyMonth && !isGenerating && (
         <div className="max-w-7xl mx-auto py-8 px-6">
           <Tabs defaultValue="summary" className="w-full">
@@ -230,7 +237,6 @@ const Playbook = () => {
             </TabsList>
             
             <TabsContent value="summary" className="space-y-8">
-              {/* Budget Allocation Chart */}
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-semibold text-blue-700">Budget Allocation</h2>
@@ -250,7 +256,6 @@ const Playbook = () => {
                 </div>
               </div>
               
-              {/* Time Allocation Chart */}
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-semibold text-blue-700">Time Allocation</h2>
@@ -272,7 +277,6 @@ const Playbook = () => {
             </TabsContent>
             
             <TabsContent value="tasks">
-              {/* Task Filters and Search */}
               <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
                 <h2 className="text-2xl font-semibold text-blue-700 mb-4">Marketing Tasks</h2>
                 <div className="flex flex-col sm:flex-row gap-4 justify-between mb-6">
@@ -304,7 +308,6 @@ const Playbook = () => {
                   </div>
                 </div>
                 
-                {/* Task Status Filter */}
                 <div className="flex flex-wrap gap-3">
                   <Button
                     variant={activeFilter === "all" ? "default" : "outline"}
@@ -344,7 +347,6 @@ const Playbook = () => {
                 </div>
               </div>
               
-              {/* Task List */}
               <DriverTasksAccordion
                 driverId="all"
                 searchQuery={searchQuery}
