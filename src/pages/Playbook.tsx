@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Search, Filter, ChevronDown, ArrowRight, RefreshCcw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -73,6 +74,20 @@ const Playbook = () => {
 
   const handleGoToTracker = () => {
     navigate("/tracker");
+  };
+
+  // Function to save playbook and show confetti
+  const handleSavePlaybook = () => {
+    setSaved(true);
+    setShowConfetti(true);
+    toast({
+      title: "Playbook Saved!",
+      description: "Your playbook has been saved successfully.",
+    });
+    
+    setTimeout(() => {
+      setShowConfetti(false);
+    }, 3000);
   };
 
   return (
@@ -187,6 +202,13 @@ const Playbook = () => {
             <div className="flex flex-wrap gap-4 mb-8 justify-center">
               <Button
                 size="lg"
+                onClick={handleSavePlaybook}
+                className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-md"
+              >
+                Save My Playbook
+              </Button>
+              <Button
+                size="lg"
                 onClick={handleGoToTracker}
                 className="bg-gradient-to-r from-violet-500 to-blue-500 hover:from-violet-600 hover:to-blue-600 text-white shadow-md"
               >
@@ -250,48 +272,6 @@ const Playbook = () => {
             </TabsContent>
             
             <TabsContent value="tasks">
-              {/* CTA Buttons - Save/Go to Tracker */}
-              <div className="flex flex-col sm:flex-row items-center gap-4 mb-8 justify-between">
-                {!saved ? (
-                  <Button
-                    size="lg"
-                    className="bg-gradient-to-r from-violet-500 to-blue-500 text-white shadow-md hover:scale-105 transition-transform"
-                    onClick={handleSavePlaybook}
-                    aria-label="Save playbook"
-                  >
-                    <Save className="mr-2" size={20} />
-                    Save My Playbook
-                  </Button>
-                ) : (
-                  <Button
-                    size="lg"
-                    className="bg-gradient-to-r from-blue-500 to-violet-500 text-white shadow-md hover:scale-105 transition-transform animate-enter"
-                    onClick={handleGoToTracker}
-                    aria-label="Go to tracker"
-                  >
-                    <ArrowRight className="mr-2" size={20} />
-                    Go to Tracker
-                  </Button>
-                )}
-                {/* Motivation/feedback small tip */}
-                {saved && (
-                  <div className="flex items-center gap-2 text-blue-700 font-medium px-4 py-2 rounded-lg bg-blue-50">
-                    <span>🎯 Did you love your playbook?</span>
-                    <button
-                      aria-label="Yes, I love it!"
-                      onClick={() =>
-                        toast({
-                          title: "Thank you!",
-                          description: "Glad you liked your playbook. Let's win together!",
-                        })
-                      }
-                      className="ml-1 hover:scale-125 transition-transform"
-                    >
-                      <span role="img" aria-label="Thumb up">👍</span>
-                    </button>
-                  </div>
-                )}
-              </div>
               {/* Task Filters and Search */}
               <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
                 <h2 className="text-2xl font-semibold text-blue-700 mb-4">Marketing Tasks</h2>

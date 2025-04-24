@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Wrench, Users, Handshake } from "lucide-react";
 import ResourceSectionCard from "@/components/ResourceSectionCard";
@@ -193,7 +194,7 @@ export default function ResourceGuide() {
             >
               {section.key === "diy"
                 ? section.getContent({ links: diyLinks })
-                : section.getContent({})
+                : section.getContent({ links: [] })
               }
             </div>
           ))}
