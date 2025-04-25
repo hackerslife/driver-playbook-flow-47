@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,6 +27,7 @@ interface FeedbackFormValues {
 
 const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1 }: OptimizationStreakProps) => {
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [showForm, setShowForm] = useState(true);
   
   const form = useForm<FeedbackFormValues>({
     defaultValues: {
@@ -47,20 +49,33 @@ const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1
       description: "Your optimization streak continues! We'll use this to improve your next playbook.",
     });
     setFeedbackSubmitted(true);
+    setShowForm(false);
+  };
+  
+  const handleDoItLater = () => {
+    toast({
+      title: "Feedback postponed",
+      description: "You can provide feedback later by clicking on your streak icon.",
+    });
+    setShowForm(false);
+  };
+  
+  const handleClickStreak = () => {
+    setShowForm(true);
   };
 
   const StreakIndicator = () => (
-    <div className="fixed top-4 right-4 z-50">
+    <div className="fixed top-4 right-4 z-50" onClick={handleClickStreak}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <div className="flex items-center gap-1 bg-orange-100 text-orange-700 px-3 py-1.5 rounded-full">
+            <div className="flex items-center gap-1 bg-orange-100 text-orange-700 px-3 py-1.5 rounded-full cursor-pointer hover:bg-orange-200 transition-colors">
               <span className="text-lg">🔥</span>
               <span className="font-medium">{streakCount}</span>
             </div>
           </TooltipTrigger>
           <TooltipContent>
-            <p>You're on a {streakCount}-month optimization streak!</p>
+            <p>You're on a {streakCount}-month optimization streak! Click to give feedback.</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -68,10 +83,12 @@ const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1
   );
 
   if ((hasLastMonthFeedback && streakCount > 0) || feedbackSubmitted) {
-    return <StreakIndicator />;
+    if (!showForm) {
+      return <StreakIndicator />;
+    }
   }
 
-  if (isNextMonth && hasLastMonthFeedback) {
+  if (isNextMonth && hasLastMonthFeedback && !showForm) {
     return (
       <>
         <StreakIndicator />
@@ -89,23 +106,30 @@ const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1
     );
   }
 
-  if (isNextMonth) {
-    return null;
+  if (isNextMonth && !showForm) {
+    return <StreakIndicator />;
   }
 
-  if (feedbackSubmitted) {
+  if (feedbackSubmitted && !showForm) {
     return (
-      <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-orange-200">
-        <CardContent className="pt-6">
-          <div className="flex items-center gap-2 text-lg font-medium text-orange-700">
-            🔥 You're on a {streakCount}-month optimization streak!
-          </div>
-          <p className="mt-2 text-orange-600">
-            Thanks for helping us optimize your next month's playbook.
-          </p>
-        </CardContent>
-      </Card>
+      <>
+        <StreakIndicator />
+        <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-orange-200">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-2 text-lg font-medium text-orange-700">
+              🔥 You're on a {streakCount}-month optimization streak!
+            </div>
+            <p className="mt-2 text-orange-600">
+              Thanks for helping us optimize your next month's playbook.
+            </p>
+          </CardContent>
+        </Card>
+      </>
     );
+  }
+
+  if (!showForm) {
+    return <StreakIndicator />;
   }
 
   return (
@@ -193,9 +217,19 @@ const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1
               />
             </div>
 
-            <Button type="submit" className="w-full">
-              Submit Feedback
-            </Button>
+            <div className="flex space-x-4">
+              <Button type="submit" className="flex-1">
+                Submit Feedback
+              </Button>
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="flex-1"
+                onClick={handleDoItLater}
+              >
+                Do It Later
+              </Button>
+            </div>
           </form>
         </Form>
       </CardContent>

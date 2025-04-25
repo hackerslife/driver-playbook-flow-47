@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Search, Filter, ChevronDown, ArrowRight, RefreshCcw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,6 +16,7 @@ import ConfettiBurst from "@/components/ConfettiBurst";
 import { toast } from "@/hooks/use-toast";
 import GeneratePlaybookProgress from "@/components/GeneratePlaybookProgress";
 import OptimizationStreak from "@/components/OptimizationStreak";
+import { Slider } from "@/components/ui/slider";
 
 const getCurrentMonthYear = () => {
   const date = new Date();
@@ -44,15 +46,16 @@ const Playbook = () => {
   const [businessInfo, setBusinessInfo] = useState({
     industry: "Home Services",
     service: "Plumbing & HVAC",
-    goal: "Increase Local Awareness",
+    goal: "Balanced",
     maturity: "Established (3-5 years)",
-    revenue: "$250,000 - $500,000"
+    revenue: "250000"
   });
   const [isGenerating, setIsGenerating] = useState(false);
   const [isEmptyMonth, setIsEmptyMonth] = useState(false);
   const [activeMonth, setActiveMonth] = useState<"current" | "next">("current");
   const [hasLastMonthFeedback, setHasLastMonthFeedback] = useState(false);
   const [streakCount, setStreakCount] = useState(1);
+  const [marketingGoalValue, setMarketingGoalValue] = useState([50]);
 
   const navigate = useNavigate();
 
@@ -92,6 +95,20 @@ const Playbook = () => {
     }, 3000);
   };
 
+  const getGoalLabel = (value: number) => {
+    if (value <= 33) return "Max Profitability";
+    if (value <= 66) return "Balanced";
+    return "Max Growth";
+  };
+  
+  const handleGoalChange = (values: number[]) => {
+    setMarketingGoalValue(values);
+    setBusinessInfo(prev => ({
+      ...prev,
+      goal: getGoalLabel(values[0])
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <TopNavbar />
@@ -122,7 +139,7 @@ const Playbook = () => {
               setIsEmptyMonth(true);
             }}
           >
-            Next Month
+            Current Month
           </Button>
         </div>
       </div>
@@ -182,23 +199,144 @@ const Playbook = () => {
             <>
               <div className="mb-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                  {Object.entries(businessInfo).map(([key, value]) => (
-                    <Card key={key} className="backdrop-blur-sm bg-white/80 hover:shadow-md transition-all border border-blue-100">
-                      <CardHeader className="py-4 px-5">
-                        <CardTitle className="text-sm text-gray-600 capitalize">{key}</CardTitle>
-                      </CardHeader>
-                      <CardContent className="py-0 px-5 pb-4">
-                        <Input
-                          value={value}
-                          onChange={(e) => setBusinessInfo(prev => ({
-                            ...prev,
-                            [key]: e.target.value
-                          }))}
-                          className="mt-1 bg-transparent border-blue-200 focus:border-blue-400"
+                  {/* Business Industry Field */}
+                  <Card className="backdrop-blur-sm bg-white/80 hover:shadow-md transition-all border border-blue-100">
+                    <CardHeader className="py-4 px-5">
+                      <CardTitle className="text-sm text-gray-600 capitalize">Business Industry</CardTitle>
+                    </CardHeader>
+                    <CardContent className="py-0 px-5 pb-4">
+                      <Select
+                        value={businessInfo.industry}
+                        onValueChange={(value) => setBusinessInfo(prev => ({
+                          ...prev,
+                          industry: value,
+                          // Reset service if industry changes
+                          service: value === "Home Services" ? "Plumbing & HVAC" : "General"
+                        }))}
+                      >
+                        <SelectTrigger className="w-full bg-transparent border-blue-200 focus:border-blue-400">
+                          <SelectValue placeholder="Select industry" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Home Services">Home Services</SelectItem>
+                          <SelectItem value="Educational Services">Educational Services</SelectItem>
+                          <SelectItem value="Financial Services">Financial Services</SelectItem>
+                          <SelectItem value="Healthcare">Healthcare</SelectItem>
+                          <SelectItem value="Retail">Retail</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Business Service Field */}
+                  <Card className="backdrop-blur-sm bg-white/80 hover:shadow-md transition-all border border-blue-100">
+                    <CardHeader className="py-4 px-5">
+                      <CardTitle className="text-sm text-gray-600 capitalize">Business Service</CardTitle>
+                    </CardHeader>
+                    <CardContent className="py-0 px-5 pb-4">
+                      <Select
+                        value={businessInfo.service}
+                        onValueChange={(value) => setBusinessInfo(prev => ({
+                          ...prev,
+                          service: value
+                        }))}
+                      >
+                        <SelectTrigger className="w-full bg-transparent border-blue-200 focus:border-blue-400">
+                          <SelectValue placeholder="Select service" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {businessInfo.industry === "Home Services" ? (
+                            <>
+                              <SelectItem value="Plumbing & HVAC">Plumbing & HVAC</SelectItem>
+                              <SelectItem value="Roofing Services">Roofing Services</SelectItem>
+                              <SelectItem value="Landscaping">Landscaping</SelectItem>
+                              <SelectItem value="Cleaning Services">Cleaning Services</SelectItem>
+                            </>
+                          ) : (
+                            <SelectItem value="General">General</SelectItem>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Marketing Goal Field with Slider */}
+                  <Card className="backdrop-blur-sm bg-white/80 hover:shadow-md transition-all border border-blue-100">
+                    <CardHeader className="py-4 px-5">
+                      <CardTitle className="text-sm text-gray-600 capitalize">Marketing Goal</CardTitle>
+                    </CardHeader>
+                    <CardContent className="py-0 px-5 pb-4">
+                      <div className="space-y-4">
+                        <Slider
+                          className="my-4"
+                          value={marketingGoalValue}
+                          min={0}
+                          max={100}
+                          step={1}
+                          onValueChange={handleGoalChange}
                         />
-                      </CardContent>
-                    </Card>
-                  ))}
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>Max Profitability</span>
+                          <span>Balanced</span>
+                          <span>Max Growth</span>
+                        </div>
+                        <div className="pt-2 text-center text-sm font-medium text-blue-600">
+                          {businessInfo.goal}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Business Maturity Field */}
+                  <Card className="backdrop-blur-sm bg-white/80 hover:shadow-md transition-all border border-blue-100">
+                    <CardHeader className="py-4 px-5">
+                      <CardTitle className="text-sm text-gray-600 capitalize">Business Maturity</CardTitle>
+                    </CardHeader>
+                    <CardContent className="py-0 px-5 pb-4">
+                      <Select
+                        value={businessInfo.maturity}
+                        onValueChange={(value) => setBusinessInfo(prev => ({
+                          ...prev,
+                          maturity: value
+                        }))}
+                      >
+                        <SelectTrigger className="w-full bg-transparent border-blue-200 focus:border-blue-400">
+                          <SelectValue placeholder="Select maturity" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="New/Startup">New/Startup</SelectItem>
+                          <SelectItem value="Established (3-5 years)">Established (3-5 years)</SelectItem>
+                          <SelectItem value="Mature (5+ years)">Mature (5+ years)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Annual Revenue Field */}
+                  <Card className="backdrop-blur-sm bg-white/80 hover:shadow-md transition-all border border-blue-100">
+                    <CardHeader className="py-4 px-5">
+                      <CardTitle className="text-sm text-gray-600 capitalize">Annual Revenue</CardTitle>
+                    </CardHeader>
+                    <CardContent className="py-0 px-5 pb-4">
+                      <div className="relative mt-1">
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                          $
+                        </span>
+                        <Input
+                          value={businessInfo.revenue}
+                          onChange={(e) => {
+                            // Only allow numbers
+                            const value = e.target.value.replace(/\D/g, '');
+                            setBusinessInfo(prev => ({
+                              ...prev,
+                              revenue: value
+                            }))
+                          }}
+                          className="pl-6 bg-transparent border-blue-200 focus:border-blue-400"
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
                 <Button 
                   className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2"
@@ -222,7 +360,7 @@ const Playbook = () => {
                     onClick={handleSavePlaybook}
                     className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-md"
                   >
-                    Save My Playbook
+                    {saved ? "Update My Playbook" : "Save My Playbook"}
                   </Button>
                   <Button
                     size="lg"
