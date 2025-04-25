@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -13,8 +13,21 @@ interface OptimizationStreakProps {
   streakCount?: number;
 }
 
+interface FeedbackFormValues {
+  monthlyRevenue: string;
+  customerSources: {
+    seo: boolean;
+    ads: boolean;
+    socialMedia: boolean;
+    referrals: boolean;
+  };
+  monthlyVisitors: string;
+}
+
 const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1 }: OptimizationStreakProps) => {
-  const form = useForm({
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  
+  const form = useForm<FeedbackFormValues>({
     defaultValues: {
       monthlyRevenue: "",
       customerSources: {
@@ -27,31 +40,47 @@ const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1
     }
   });
 
-  const handleSubmitFeedback = (data: any) => {
-    // In a real app, this would be saved to a database
+  const handleSubmitFeedback = (data: FeedbackFormValues) => {
     console.log("Feedback submitted:", data);
     toast({
       title: "Feedback submitted!",
       description: "Your optimization streak continues! We'll use this to improve your next playbook.",
     });
+    setFeedbackSubmitted(true);
   };
 
+  if (isNextMonth && hasLastMonthFeedback) {
+    return (
+      <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-orange-200">
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-2 text-lg font-medium text-orange-700">
+            🔥 You're on a {streakCount}-month optimization streak!
+          </div>
+          <p className="mt-2 text-orange-600">
+            Keep it going by answering 3 questions and unlock better tasks for next month.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   if (isNextMonth) {
-    if (hasLastMonthFeedback) {
-      return (
-        <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-orange-200">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2 text-lg font-medium text-orange-700">
-              🔥 You're on a {streakCount}-month optimization streak!
-            </div>
-            <p className="mt-2 text-orange-600">
-              Keep it going by answering 3 questions and unlock better tasks for next month.
-            </p>
-          </CardContent>
-        </Card>
-      );
-    }
     return null;
+  }
+
+  if (feedbackSubmitted) {
+    return (
+      <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-orange-200">
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-2 text-lg font-medium text-orange-700">
+            🔥 You're on a 1-month optimization streak!
+          </div>
+          <p className="mt-2 text-orange-600">
+            Thanks for helping us optimize your next month's playbook.
+          </p>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
@@ -90,20 +119,25 @@ const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1
               <FormItem>
                 <FormLabel>Where do most of your customers come from?</FormLabel>
                 <div className="grid grid-cols-2 gap-4">
-                  {['SEO', 'Ads', 'Social Media', 'Referrals'].map((source) => (
+                  {[
+                    { label: 'SEO', value: 'seo' },
+                    { label: 'Ads', value: 'ads' },
+                    { label: 'Social Media', value: 'socialMedia' },
+                    { label: 'Referrals', value: 'referrals' }
+                  ].map((source) => (
                     <FormField
-                      key={source}
+                      key={source.value}
                       control={form.control}
-                      name={`customerSources.${source.toLowerCase().replace(' ', '')}`}
+                      name={`customerSources.${source.value}` as keyof FeedbackFormValues}
                       render={({ field }) => (
                         <FormItem className="flex items-center space-x-2">
                           <FormControl>
                             <Checkbox
-                              checked={field.value}
+                              checked={field.value as boolean}
                               onCheckedChange={field.onChange}
                             />
                           </FormControl>
-                          <FormLabel className="font-normal">{source}</FormLabel>
+                          <FormLabel className="font-normal">{source.label}</FormLabel>
                         </FormItem>
                       )}
                     />
