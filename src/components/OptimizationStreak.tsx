@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,6 +5,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { toast } from "@/hooks/use-toast";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Trophy } from "lucide-react";
 
 interface OptimizationStreakProps {
   isNextMonth: boolean;
@@ -49,18 +50,43 @@ const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1
     setFeedbackSubmitted(true);
   };
 
+  const StreakIndicator = () => (
+    <div className="fixed top-4 right-4 z-50">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="flex items-center gap-1 bg-orange-100 text-orange-700 px-3 py-1.5 rounded-full">
+              <Trophy className="w-4 h-4" />
+              <span className="font-medium">{streakCount}</span>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>You're on a {streakCount}-month optimization streak!</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+  );
+
+  if ((hasLastMonthFeedback && streakCount > 0) || feedbackSubmitted) {
+    return <StreakIndicator />;
+  }
+
   if (isNextMonth && hasLastMonthFeedback) {
     return (
-      <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-orange-200">
-        <CardContent className="pt-6">
-          <div className="flex items-center gap-2 text-lg font-medium text-orange-700">
-            🔥 You're on a {streakCount}-month optimization streak!
-          </div>
-          <p className="mt-2 text-orange-600">
-            Keep it going by answering 3 questions and unlock better tasks for next month.
-          </p>
-        </CardContent>
-      </Card>
+      <>
+        <StreakIndicator />
+        <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-orange-200">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-2 text-lg font-medium text-orange-700">
+              🔥 You're on a {streakCount}-month optimization streak!
+            </div>
+            <p className="mt-2 text-orange-600">
+              Keep it going by answering 3 questions and unlock better tasks for next month.
+            </p>
+          </CardContent>
+        </Card>
+      </>
     );
   }
 
@@ -73,7 +99,7 @@ const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1
       <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-orange-200">
         <CardContent className="pt-6">
           <div className="flex items-center gap-2 text-lg font-medium text-orange-700">
-            🔥 You're on a 1-month optimization streak!
+            🔥 You're on a {streakCount}-month optimization streak!
           </div>
           <p className="mt-2 text-orange-600">
             Thanks for helping us optimize your next month's playbook.
@@ -130,8 +156,6 @@ const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1
                       control={form.control}
                       name={`customerSources.${source.value}` as any}
                       render={({ field }) => {
-                        // Here's the fix - ensure we're accessing the correct property
-                        // and cast it to boolean
                         return (
                         <FormItem className="flex items-center space-x-2">
                           <FormControl>
