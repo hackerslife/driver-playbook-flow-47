@@ -107,7 +107,7 @@ const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1
                         </FormItem>
                       )}
                     />
-                  )}
+                  ))}
                 </div>
               </FormItem>
 
