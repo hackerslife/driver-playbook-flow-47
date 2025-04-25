@@ -128,18 +128,21 @@ const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1
                     <FormField
                       key={source.value}
                       control={form.control}
-                      name={`customerSources.${source.value}` as keyof FeedbackFormValues}
-                      render={({ field }) => (
+                      name={`customerSources.${source.value}` as any}
+                      render={({ field }) => {
+                        // Here's the fix - ensure we're accessing the correct property
+                        // and cast it to boolean
+                        return (
                         <FormItem className="flex items-center space-x-2">
                           <FormControl>
                             <Checkbox
-                              checked={field.value as boolean}
+                              checked={!!field.value}
                               onCheckedChange={field.onChange}
                             />
                           </FormControl>
                           <FormLabel className="font-normal">{source.label}</FormLabel>
                         </FormItem>
-                      )}
+                      )}}
                     />
                   ))}
                 </div>
