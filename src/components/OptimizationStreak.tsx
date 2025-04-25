@@ -6,7 +6,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { useForm } from "react-hook-form";
 import { toast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Trophy } from "lucide-react";
 
 interface OptimizationStreakProps {
   isNextMonth: boolean;
@@ -56,7 +55,7 @@ const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1
         <Tooltip>
           <TooltipTrigger>
             <div className="flex items-center gap-1 bg-orange-100 text-orange-700 px-3 py-1.5 rounded-full">
-              <Trophy className="w-4 h-4" />
+              <span className="text-lg">🔥</span>
               <span className="font-medium">{streakCount}</span>
             </div>
           </TooltipTrigger>
