@@ -298,7 +298,7 @@ const Playbook = () => {
       {!isEmptyMonth && !isGenerating && <div className="max-w-7xl mx-auto py-8 px-6">
           <Tabs defaultValue="summary" className="w-full">
             <TabsList className="mb-8 w-full flex justify-center">
-              <TabsTrigger value="summary" className="w-40 text-lg py-3">Playbook Summary</TabsTrigger>
+              <TabsTrigger value="summary" className="w-40 text-lg py-3 px-[10px]">Playbook Summary</TabsTrigger>
               <TabsTrigger value="tasks" className="w-40 text-lg py-3">Playbook Tasks</TabsTrigger>
             </TabsList>
             
