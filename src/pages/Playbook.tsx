@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Search, Filter, ChevronDown, ArrowRight, RefreshCcw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +18,7 @@ import GeneratePlaybookProgress from "@/components/GeneratePlaybookProgress";
 import OptimizationStreak from "@/components/OptimizationStreak";
 import { Slider } from "@/components/ui/slider";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 const getCurrentMonthYear = () => {
   const date = new Date();
   return {
@@ -26,6 +28,7 @@ const getCurrentMonthYear = () => {
     year: date.getFullYear()
   };
 };
+
 const getNextMonth = () => {
   const date = new Date();
   date.setMonth(date.getMonth() + 1);
@@ -33,6 +36,7 @@ const getNextMonth = () => {
     month: 'long'
   });
 };
+
 const Playbook = () => {
   const {
     month,
@@ -62,6 +66,7 @@ const Playbook = () => {
   const [generationCount, setGenerationCount] = useState(5);
   const GENERATION_LIMIT = 100;
   const navigate = useNavigate();
+
   const handleGeneratePlaybook = () => {
     setIsGenerating(true);
     setGenerationCount(prev => Math.min(prev + 1, GENERATION_LIMIT));
@@ -74,15 +79,18 @@ const Playbook = () => {
       });
     }, 6000);
   };
+
   const handleKeepPlaybook = () => {
     setIsEmptyMonth(false);
     toast({
       description: `Continuing with ${month}'s playbook`
     });
   };
+
   const handleGoToTracker = () => {
     navigate("/tracker");
   };
+
   const handleSavePlaybook = () => {
     setSaved(true);
     setShowConfetti(true);
@@ -94,11 +102,13 @@ const Playbook = () => {
       setShowConfetti(false);
     }, 3000);
   };
+
   const getGoalLabel = (value: number) => {
     if (value <= 33) return "Max Profitability";
     if (value <= 66) return "Balanced";
     return "Max Growth";
   };
+
   const handleGoalChange = (values: number[]) => {
     setMarketingGoalValue(values);
     setBusinessInfo(prev => ({
@@ -106,7 +116,9 @@ const Playbook = () => {
       goal: getGoalLabel(values[0])
     }));
   };
-  return <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <TopNavbar />
       {showConfetti && <ConfettiBurst />}
       
@@ -159,7 +171,7 @@ const Playbook = () => {
               </div>}
           </div>
 
-          {(activeMonth === "current" || !isEmptyMonth) && <>
+          {(activeMonth === "current" || !isEmptyMonth) && (
               <div className="mb-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                   {/* Business Industry Field */}
@@ -298,26 +310,30 @@ const Playbook = () => {
                   </div>
                 </div>
               </div>
+            )}
 
-              {isGenerating && <div className="my-8">
-                  <GeneratePlaybookProgress />
-                </div>}
+            {isGenerating && (
+              <div className="my-8">
+                <GeneratePlaybookProgress />
+              </div>
+            )}
 
-              {!isEmptyMonth && !isGenerating && <div className="flex flex-wrap gap-4 mb-8 justify-center">
-                  <Button size="lg" onClick={handleSavePlaybook} className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-md">
-                    {saved ? "Update My Playbook" : "Save My Playbook"}
-                  </Button>
-                  <Button size="lg" onClick={handleGoToTracker} className="bg-gradient-to-r from-violet-500 to-blue-500 hover:from-violet-600 hover:to-blue-600 text-white shadow-md">
-                    <ArrowRight className="mr-2" size={20} />
-                    Track Your Tasks
-                  </Button>
-                </div>}
-            </>}
-          </div>
+            {!isEmptyMonth && !isGenerating && (
+              <div className="flex flex-wrap gap-4 mb-8 justify-center">
+                <Button size="lg" onClick={handleSavePlaybook} className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-md">
+                  {saved ? "Update My Playbook" : "Save My Playbook"}
+                </Button>
+                <Button size="lg" onClick={handleGoToTracker} className="bg-gradient-to-r from-violet-500 to-blue-500 hover:from-violet-600 hover:to-blue-600 text-white shadow-md">
+                  <ArrowRight className="mr-2" size={20} />
+                  Track Your Tasks
+                </Button>
+              </div>
+            )}
         </div>
       </div>
 
-      {!isEmptyMonth && !isGenerating && <div className="max-w-7xl mx-auto py-8 px-6">
+      {!isEmptyMonth && !isGenerating && (
+        <div className="max-w-7xl mx-auto py-8 px-6">
           <Tabs defaultValue="summary" className="w-full">
             <TabsList className="mb-8 w-full flex justify-center">
               <TabsTrigger value="summary" className="w-40 text-lg mx-[24px] my-[13px] py-[10px] px-[103px]">Playbook Summary</TabsTrigger>
@@ -413,7 +429,10 @@ const Playbook = () => {
               <DriverTasksAccordion driverId="all" searchQuery={searchQuery} activeFilter={activeFilter} activeStatus={activeStatus} />
             </TabsContent>
           </Tabs>
-        </div>}
-    </div>;
+        </div>
+      )}
+    </div>
+  );
 };
+
 export default Playbook;
