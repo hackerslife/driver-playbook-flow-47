@@ -14,7 +14,7 @@ const Index = () => {
         </p>
         <Button 
           className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg rounded-lg shadow-lg transition-all"
-          onClick={() => navigate("/tracker")}
+          onClick={() => navigate("/playbook")}
         >
           Go to Playbook Tracker
         </Button>
