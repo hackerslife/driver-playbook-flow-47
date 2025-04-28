@@ -16,6 +16,7 @@ import { toast } from "@/hooks/use-toast";
 import GeneratePlaybookProgress from "@/components/GeneratePlaybookProgress";
 import OptimizationStreak from "@/components/OptimizationStreak";
 import { Slider } from "@/components/ui/slider";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 const getCurrentMonthYear = () => {
   const date = new Date();
   return {
@@ -58,9 +59,12 @@ const Playbook = () => {
   const [hasLastMonthFeedback, setHasLastMonthFeedback] = useState(false);
   const [streakCount, setStreakCount] = useState(1);
   const [marketingGoalValue, setMarketingGoalValue] = useState([50]);
+  const [generationCount, setGenerationCount] = useState(5);
+  const GENERATION_LIMIT = 100;
   const navigate = useNavigate();
   const handleGeneratePlaybook = () => {
     setIsGenerating(true);
+    setGenerationCount(prev => Math.min(prev + 1, GENERATION_LIMIT));
     setTimeout(() => {
       setIsGenerating(false);
       setIsEmptyMonth(false);
@@ -131,9 +135,10 @@ const Playbook = () => {
               {activeMonth === "next" ? "Generate your next month's playbook optimized with your progress." : "Your customized marketing strategy and task plan"}
             </p>
             
-            <div className="mb-8">
-              <OptimizationStreak isNextMonth={activeMonth === "next"} hasLastMonthFeedback={hasLastMonthFeedback} streakCount={streakCount} />
-            </div>
+            {/* Only show optimization streak when not in next month */}
+            {activeMonth === "current" && <div className="mb-8">
+                <OptimizationStreak isNextMonth={activeMonth === "next"} hasLastMonthFeedback={hasLastMonthFeedback} streakCount={streakCount} />
+              </div>}
 
             {activeMonth === "next" && <div className="w-full max-w-2xl bg-white border border-amber-200 rounded-lg p-6 mb-6">
                 <p className="text-gray-800 mb-6 text-center">
@@ -272,10 +277,26 @@ const Playbook = () => {
                     </CardContent>
                   </Card>
                 </div>
-                <Button className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2" onClick={handleGeneratePlaybook}>
-                  <RefreshCcw className="mr-2 h-4 w-4" />
-                  Generate Updated Playbook
-                </Button>
+                <div className="relative">
+                  <Button className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2" onClick={handleGeneratePlaybook}>
+                    <RefreshCcw className="mr-2 h-4 w-4" />
+                    Generate Playbook
+                  </Button>
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <span className="text-sm text-gray-500">
+                            {generationCount}/{GENERATION_LIMIT}
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>You've used {generationCount} out of {GENERATION_LIMIT} monthly playbook generations</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                </div>
               </div>
 
               {isGenerating && <div className="my-8">
@@ -292,6 +313,7 @@ const Playbook = () => {
                   </Button>
                 </div>}
             </>}
+          </div>
         </div>
       </div>
 
