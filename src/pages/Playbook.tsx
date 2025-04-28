@@ -324,7 +324,7 @@ const Playbook = () => {
             </TabsList>
             
             <TabsContent value="summary" className="space-y-8">
-              <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="bg-white rounded-xl shadow-sm p-6 mx-[2px] my-[42px] py-[52px]">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-semibold text-blue-700">Budget Allocation</h2>
                   <Select value={budgetViewBy} onValueChange={setBudgetViewBy}>
@@ -338,12 +338,12 @@ const Playbook = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="h-80">
+                <div className="h-80 mx-[240px]">
                   <BudgetAllocationChart viewBy={budgetViewBy} />
                 </div>
               </div>
               
-              <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="bg-white rounded-xl shadow-sm p-6 my-[36px] mx-0 px-[37px] py-[41px]">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-semibold text-blue-700">Time Allocation</h2>
                   <Select value={timeViewBy} onValueChange={setTimeViewBy}>
@@ -357,7 +357,7 @@ const Playbook = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="h-80">
+                <div className="h-80 mx-[240px]">
                   <TimeAllocationChart viewBy={timeViewBy} />
                 </div>
               </div>
