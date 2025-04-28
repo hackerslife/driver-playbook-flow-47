@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Search, Filter, ChevronDown, ArrowRight, RefreshCcw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +18,7 @@ import GeneratePlaybookProgress from "@/components/GeneratePlaybookProgress";
 import OptimizationStreak from "@/components/OptimizationStreak";
 import { Slider } from "@/components/ui/slider";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 const getCurrentMonthYear = () => {
   const date = new Date();
   return {
@@ -26,6 +28,7 @@ const getCurrentMonthYear = () => {
     year: date.getFullYear()
   };
 };
+
 const getNextMonth = () => {
   const date = new Date();
   date.setMonth(date.getMonth() + 1);
@@ -33,6 +36,7 @@ const getNextMonth = () => {
     month: 'long'
   });
 };
+
 const Playbook = () => {
   const {
     month,
@@ -62,6 +66,7 @@ const Playbook = () => {
   const [generationCount, setGenerationCount] = useState(5);
   const GENERATION_LIMIT = 100;
   const navigate = useNavigate();
+  
   const handleGeneratePlaybook = () => {
     setIsGenerating(true);
     setGenerationCount(prev => Math.min(prev + 1, GENERATION_LIMIT));
@@ -74,15 +79,18 @@ const Playbook = () => {
       });
     }, 6000);
   };
+  
   const handleKeepPlaybook = () => {
     setIsEmptyMonth(false);
     toast({
       description: `Continuing with ${month}'s playbook`
     });
   };
+  
   const handleGoToTracker = () => {
     navigate("/tracker");
   };
+  
   const handleSavePlaybook = () => {
     setSaved(true);
     setShowConfetti(true);
@@ -94,11 +102,13 @@ const Playbook = () => {
       setShowConfetti(false);
     }, 3000);
   };
+  
   const getGoalLabel = (value: number) => {
     if (value <= 33) return "Max Profitability";
     if (value <= 66) return "Balanced";
     return "Max Growth";
   };
+  
   const handleGoalChange = (values: number[]) => {
     setMarketingGoalValue(values);
     setBusinessInfo(prev => ({
@@ -106,7 +116,9 @@ const Playbook = () => {
       goal: getGoalLabel(values[0])
     }));
   };
-  return <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <TopNavbar />
       {showConfetti && <ConfettiBurst />}
       
@@ -293,7 +305,9 @@ const Playbook = () => {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          
+                          <span className="text-sm text-gray-500">
+                            {generationCount}/{GENERATION_LIMIT}
+                          </span>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>You've used {generationCount} out of {GENERATION_LIMIT} monthly playbook generations</p>
