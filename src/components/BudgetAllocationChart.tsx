@@ -1,130 +1,145 @@
 
 import { ChartContainer, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
-import { PieChart, Pie, Cell, ResponsiveContainer, Sector } from "recharts";
-import { useState } from "react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 interface BudgetAllocationChartProps {
   viewBy: string;
 }
 
 const BudgetAllocationChart = ({ viewBy }: BudgetAllocationChartProps) => {
-  const [activeIndex, setActiveIndex] = useState(0);
+  // Calculate total budget
+  const getTotalBudget = (data: any[]) => {
+    return data.reduce((total, item) => total + item.diy + item.getHelp, 0);
+  };
 
-  // Mock data - we'll change this based on the viewBy parameter
+  // Format currency
+  const formatCurrency = (value: number): string => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
+  // Mock data based on viewBy parameter
   const getChartData = () => {
     switch (viewBy) {
       case "driver":
         return [
-          { name: "Brandprint", value: 35, color: "#8B5CF6" },
-          { name: "Content Creation", value: 25, color: "#3B82F6" },
-          { name: "Licensing Tools", value: 15, color: "#10B981" },
-          { name: "Customer Acquisition", value: 15, color: "#F59E0B" },
-          { name: "Existing Customers", value: 10, color: "#EF4444" },
+          { name: "Brandprint", diy: 1500, getHelp: 2000, color: "#8B5CF6" },
+          { name: "Content Creation", diy: 1000, getHelp: 1500, color: "#3B82F6" },
+          { name: "Licensing Tools", diy: 500, getHelp: 1000, color: "#10B981" },
+          { name: "Customer Acquisition", diy: 700, getHelp: 800, color: "#F59E0B" },
+          { name: "Existing Customers", diy: 600, getHelp: 400, color: "#EF4444" },
         ];
       case "subdriver":
         return [
-          { name: "Website", value: 20, color: "#8B5CF6" },
-          { name: "Social Media", value: 15, color: "#3B82F6" },
-          { name: "Local Listings", value: 15, color: "#10B981" },
-          { name: "Email Marketing", value: 20, color: "#F59E0B" },
-          { name: "Paid Advertising", value: 12, color: "#EF4444" },
-          { name: "Content Writing", value: 10, color: "#EC4899" },
-          { name: "Visuals", value: 8, color: "#6366F1" },
+          { name: "Website", diy: 600, getHelp: 800, color: "#8B5CF6" },
+          { name: "Social Media", diy: 500, getHelp: 700, color: "#3B82F6" },
+          { name: "Local Listings", diy: 300, getHelp: 600, color: "#10B981" },
+          { name: "Email Marketing", diy: 700, getHelp: 600, color: "#F59E0B" },
+          { name: "Paid Advertising", diy: 200, getHelp: 700, color: "#EF4444" },
+          { name: "Content Writing", diy: 400, getHelp: 300, color: "#EC4899" },
+          { name: "Visuals", diy: 300, getHelp: 500, color: "#6366F1" },
+          { name: "SEO", diy: 400, getHelp: 800, color: "#0EA5E9" },
+          { name: "Video Marketing", diy: 200, getHelp: 600, color: "#F97316" },
+          { name: "CRM Tools", diy: 300, getHelp: 400, color: "#14B8A6" },
         ];
       case "platform":
         return [
-          { name: "Google Business", value: 18, color: "#8B5CF6" },
-          { name: "Facebook", value: 12, color: "#3B82F6" },
-          { name: "Instagram", value: 15, color: "#10B981" },
-          { name: "Email Platform", value: 20, color: "#F59E0B" },
-          { name: "Google Ads", value: 15, color: "#EF4444" },
-          { name: "Yelp", value: 8, color: "#EC4899" },
-          { name: "Website Platform", value: 12, color: "#6366F1" },
+          { name: "Google Business", diy: 400, getHelp: 500, color: "#8B5CF6" },
+          { name: "Facebook", diy: 300, getHelp: 400, color: "#3B82F6" },
+          { name: "Instagram", diy: 400, getHelp: 500, color: "#10B981" },
+          { name: "Email Platform", diy: 500, getHelp: 600, color: "#F59E0B" },
+          { name: "Google Ads", diy: 200, getHelp: 800, color: "#EF4444" },
+          { name: "Yelp", diy: 200, getHelp: 300, color: "#EC4899" },
+          { name: "Website Platform", diy: 300, getHelp: 700, color: "#6366F1" },
+          { name: "Twitter", diy: 200, getHelp: 300, color: "#0EA5E9" },
+          { name: "LinkedIn", diy: 400, getHelp: 200, color: "#F97316" },
+          { name: "WordPress", diy: 300, getHelp: 500, color: "#14B8A6" },
         ];
       default:
         return [
-          { name: "Brandprint", value: 35, color: "#8B5CF6" },
-          { name: "Content Creation", value: 25, color: "#3B82F6" },
-          { name: "Licensing Tools", value: 15, color: "#10B981" },
-          { name: "Customer Acquisition", value: 15, color: "#F59E0B" },
-          { name: "Existing Customers", value: 10, color: "#EF4444" },
+          { name: "Brandprint", diy: 1500, getHelp: 2000, color: "#8B5CF6" },
+          { name: "Content Creation", diy: 1000, getHelp: 1500, color: "#3B82F6" },
+          { name: "Licensing Tools", diy: 500, getHelp: 1000, color: "#10B981" },
+          { name: "Customer Acquisition", diy: 700, getHelp: 800, color: "#F59E0B" },
+          { name: "Existing Customers", diy: 600, getHelp: 400, color: "#EF4444" },
         ];
     }
   };
   
   const data = getChartData();
+  const totalBudget = getTotalBudget(data);
   
-  // Recharts configuration
-  const renderActiveShape = (props: any) => {
-    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
-    
-    return (
-      <g>
-        <Sector
-          cx={cx}
-          cy={cy}
-          innerRadius={innerRadius}
-          outerRadius={outerRadius + 10}
-          startAngle={startAngle}
-          endAngle={endAngle}
-          fill={fill}
-        />
-      </g>
-    );
-  };
-
-  const onPieEnter = (_: any, index: number) => {
-    setActiveIndex(index);
-  };
-
   // Configuration for the chart
-  const chartConfig = data.reduce((config, item) => {
-    return {
-      ...config,
-      [item.name]: {
-        label: item.name,
-        color: item.color
-      }
-    };
-  }, {});
+  const chartConfig = {
+    diy: {
+      label: "DIY",
+      color: "#3B82F6" // Blue
+    },
+    getHelp: {
+      label: "Get Help",
+      color: "#F59E0B" // Orange
+    }
+  };
   
   return (
-    <ChartContainer config={chartConfig} className="h-full">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            activeIndex={activeIndex}
-            activeShape={renderActiveShape}
+    <>
+      <div className="mb-4 text-center">
+        <span className="text-xl font-bold">➔ Total Budget Allocation: {formatCurrency(totalBudget)}</span>
+      </div>
+      <ChartContainer config={chartConfig} className="h-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
             data={data}
-            cx="50%"
-            cy="50%"
-            innerRadius={70}
-            outerRadius={100}
-            paddingAngle={2}
-            dataKey="value"
-            onMouseEnter={onPieEnter}
+            margin={{
+              top: 20,
+              right: 30,
+              left: 20,
+              bottom: 70,
+            }}
+            barGap={0}
+            barSize={20}
           >
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}
-          </Pie>
-          <ChartLegend
-            verticalAlign="bottom"
-            layout="horizontal"
-            align="center"
-            payload={data.map(item => ({
-              value: item.name,
-              type: "square",
-              color: item.color,
-              strokeDasharray: "none",
-              id: item.name,
-            }))}
-          >
-            <ChartLegendContent />
-          </ChartLegend>
-        </PieChart>
-      </ResponsiveContainer>
-    </ChartContainer>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <XAxis 
+              dataKey="name" 
+              tick={{ fontSize: 12 }}
+              interval={0}
+              angle={-45}
+              textAnchor="end" 
+            />
+            <YAxis
+              label={{ value: 'Budget Amount ($)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
+              tickFormatter={(value) => `$${value}`}
+            />
+            <Tooltip 
+              formatter={(value) => [formatCurrency(value as number), '']}
+              labelFormatter={(label) => `${label}`}
+            />
+            <Legend 
+              verticalAlign="top"
+              align="center"
+              wrapperStyle={{ paddingBottom: '10px' }}
+            />
+            <Bar 
+              dataKey="diy" 
+              fill="#3B82F6" 
+              name="DIY"
+              radius={[4, 4, 0, 0]}
+            />
+            <Bar 
+              dataKey="getHelp" 
+              fill="#F59E0B" 
+              name="Get Help"
+              radius={[4, 4, 0, 0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartContainer>
+    </>
   );
 };
 
