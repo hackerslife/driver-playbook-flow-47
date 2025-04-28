@@ -1,4 +1,3 @@
-
 import { ChartContainer, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
@@ -7,12 +6,9 @@ interface TimeAllocationChartProps {
 }
 
 const TimeAllocationChart = ({ viewBy }: TimeAllocationChartProps) => {
-  // Get total hours calculation
-  const getTotalHours = (data: any[]) => {
-    return data.reduce((total, item) => total + item.diy + item.getHelp, 0);
-  };
+  // Constant total hours across all views
+  const TOTAL_HOURS = 22;
 
-  // Mock data based on viewBy parameter
   const getChartData = () => {
     switch (viewBy) {
       case "driver":
@@ -61,7 +57,6 @@ const TimeAllocationChart = ({ viewBy }: TimeAllocationChartProps) => {
   };
   
   const data = getChartData();
-  const totalHours = getTotalHours(data);
   
   // Configuration for the chart
   const chartConfig = {
@@ -78,7 +73,7 @@ const TimeAllocationChart = ({ viewBy }: TimeAllocationChartProps) => {
   return (
     <>
       <div className="mb-4 text-center">
-        <span className="text-xl font-bold">➔ Total Time Allocation: {totalHours} hours/week</span>
+        <span className="text-xl font-bold">➔ Total Time Allocation: {TOTAL_HOURS} hours/week</span>
       </div>
       <ChartContainer config={chartConfig} className="h-full">
         <ResponsiveContainer width="100%" height="100%">
@@ -86,8 +81,8 @@ const TimeAllocationChart = ({ viewBy }: TimeAllocationChartProps) => {
             data={data}
             margin={{
               top: 20,
-              right: 30,
-              left: 20,
+              right: 40,
+              left: 40,
               bottom: 70,
             }}
             barGap={0}

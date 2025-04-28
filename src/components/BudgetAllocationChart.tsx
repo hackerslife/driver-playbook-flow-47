@@ -1,4 +1,3 @@
-
 import { ChartContainer, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
@@ -7,10 +6,8 @@ interface BudgetAllocationChartProps {
 }
 
 const BudgetAllocationChart = ({ viewBy }: BudgetAllocationChartProps) => {
-  // Calculate total budget
-  const getTotalBudget = (data: any[]) => {
-    return data.reduce((total, item) => total + item.diy + item.getHelp, 0);
-  };
+  // Constant total budget across all views
+  const TOTAL_BUDGET = 8000;
 
   // Format currency
   const formatCurrency = (value: number): string => {
@@ -22,7 +19,6 @@ const BudgetAllocationChart = ({ viewBy }: BudgetAllocationChartProps) => {
     }).format(value);
   };
 
-  // Mock data based on viewBy parameter
   const getChartData = () => {
     switch (viewBy) {
       case "driver":
@@ -71,9 +67,7 @@ const BudgetAllocationChart = ({ viewBy }: BudgetAllocationChartProps) => {
   };
   
   const data = getChartData();
-  const totalBudget = getTotalBudget(data);
   
-  // Configuration for the chart
   const chartConfig = {
     diy: {
       label: "DIY",
@@ -88,7 +82,7 @@ const BudgetAllocationChart = ({ viewBy }: BudgetAllocationChartProps) => {
   return (
     <>
       <div className="mb-4 text-center">
-        <span className="text-xl font-bold">➔ Total Budget Allocation: {formatCurrency(totalBudget)}</span>
+        <span className="text-xl font-bold">➔ Total Budget Allocation: {formatCurrency(TOTAL_BUDGET)}</span>
       </div>
       <ChartContainer config={chartConfig} className="h-full">
         <ResponsiveContainer width="100%" height="100%">
@@ -96,8 +90,8 @@ const BudgetAllocationChart = ({ viewBy }: BudgetAllocationChartProps) => {
             data={data}
             margin={{
               top: 20,
-              right: 30,
-              left: 20,
+              right: 40,
+              left: 40,
               bottom: 70,
             }}
             barGap={0}

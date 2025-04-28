@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Search, Filter, ChevronDown, ArrowRight, RefreshCcw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -129,7 +128,7 @@ const Playbook = () => {
             className={`rounded-md px-6 py-2 text-sm font-medium transition-all ${activeMonth === "current" ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white" : "text-gray-500"}`} 
             onClick={() => setActiveMonth("current")}
           >
-            {month}
+            Current Month
           </Button>
           <Button 
             variant={activeMonth === "next" ? "default" : "ghost"} 
@@ -139,7 +138,7 @@ const Playbook = () => {
               setIsEmptyMonth(true);
             }}
           >
-            {nextMonth}
+            Next Month
           </Button>
         </div>
       </div>
