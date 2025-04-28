@@ -145,7 +145,7 @@ const Playbook = () => {
                 <div className="flex gap-4 justify-center">
                   <Button size="lg" onClick={handleGeneratePlaybook} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                     <RefreshCcw className="mr-2 h-4 w-4" />
-                    Generate {nextMonth}'s Playbook
+                    Review & Update {nextMonth}'s Playbook
                   </Button>
                   <Button variant="outline" size="lg" onClick={() => {
                 setActiveMonth("current");
