@@ -138,9 +138,9 @@ const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmitFeedback)} className="space-y-6">
             <div className="space-y-4">
-              <h3 className="text-lg font-medium">🎯 Start your optimization streak</h3>
+              <h3 className="text-lg font-medium">🎯Quick Business Snapshot</h3>
               <p className="text-muted-foreground">
-                Answer 3 quick questions to help us optimize your next month's playbook
+                Answer few quick questions to help us optimize your next month's playbook
               </p>
               
               <FormField
@@ -148,7 +148,7 @@ const OptimizationStreak = ({ isNextMonth, hasLastMonthFeedback, streakCount = 1
                 name="monthlyRevenue"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>What was your approximate monthly revenue?</FormLabel>
+                    <FormLabel>What was your approximate monthly revenue this month?</FormLabel>
                     <FormControl>
                       <select 
                         {...field} 
